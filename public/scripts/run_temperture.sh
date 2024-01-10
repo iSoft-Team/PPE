@@ -3,8 +3,6 @@
 # Get the current username
 CURRENT_USER=$(whoami)
 
-# Activate the virtual environment directly
-. /home/$CURRENT_USER/.virtualenvs/ppe/bin/activate
 # Define the target directory based on the current username
 TARGET_DIR="/home/$CURRENT_USER/Downloads/repos/ppe-app"
 

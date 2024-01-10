@@ -90,6 +90,9 @@ class HomeWindow(QMainWindow):
         self.collect.setFocusPolicy(Qt.NoFocus)
         self.collect.clicked.connect(self.show_collect_screen)
         self.collect.setStyleSheet(c.COLLECT_DATA)
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.enable_collect_button)
         
         # Add the second button to the layout
         button_layout.addWidget(self.simulate_btn)
@@ -163,6 +166,10 @@ class HomeWindow(QMainWindow):
 
     def show_collect_screen(self):
         print("show_collect_screen")
+        self.collect.setEnabled(False)
+        # Start the timer to enable the button after 5000 milliseconds (5 seconds)
+        self.timer.start(5000)
+
         self.camera.release()
         self.timer.stop()
         self.collect_window.show()
@@ -172,6 +179,11 @@ class HomeWindow(QMainWindow):
         self.collect_window.start_timer()
         self.flash_window.close()
         self.close()
+
+    def enable_collect_button(self):
+        # Enable the button when the timer times out
+        self.collect.setEnabled(True)
+        self.timer.stop()
         
     def show_info_screen(self):
         self.info_window.show()
