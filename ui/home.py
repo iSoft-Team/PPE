@@ -237,7 +237,7 @@ class HomeWindow(QMainWindow):
             self.curr_value_enzim = value
             self.gpio_handler.enzim_yn = value
             
-            if self.curr_value_enzim == cf.STATE_ENZYME:
+            if self.curr_value_enzim == cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
                 self.simulate_yn = True
             else:
                 self.simulate_yn = False
@@ -267,19 +267,19 @@ class HomeWindow(QMainWindow):
             self.reset_ui_and_interlock()
             
     def update_logic(self):
-        
+        self.update_status_machine()
         # create threading for each function
         thread_button = threading.Thread(target=self.update_button_by_enzim)
         thread_machine = threading.Thread(target=self.update_status_machine)
         thread_error_door = threading.Thread(target=self.update_status_error_door)
-
-        thread_button.start()
+        
         thread_machine.start()
+        thread_button.start()
         thread_error_door.start()
 
         # wait the functions done
-        thread_button.join()
         thread_machine.join()
+        thread_button.join()
         thread_error_door.join()
         
         self.update_button_styles()
@@ -362,5 +362,5 @@ class HomeWindow(QMainWindow):
                 self.start_detect = False
             else:
                 self.simulate_yn = True
-                
+
             self.update_button_styles()
