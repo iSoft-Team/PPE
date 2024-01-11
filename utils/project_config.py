@@ -45,6 +45,7 @@ class ProjectConfig(BaseSettings):
     STATE_BUZER = 0 # on
     STATE_READY = 1 # system ready
     
+    STATE_DEFAULT = 0
     
 project_config = ProjectConfig()
 
