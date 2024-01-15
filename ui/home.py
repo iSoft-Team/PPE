@@ -209,7 +209,7 @@ class HomeWindow(QMainWindow):
         
         self.info_btn.setStyleSheet(c.INFO_PATH)
         
-        enzim_style = c.ENZIN_LABEL_ENZIM_PATH if self.gpio_handler.enzim_yn == cf.STATE_ENZYME else c.ENZIN_LABEL_NO_ENZIM_PATH
+        enzim_style = c.ENZIN_LABEL_NO_ENZIM_PATH if self.gpio_handler.enzim_yn == cf.STATE_ENZYME else c.ENZIN_LABEL_ENZIM_PATH
         self.enzin_label.setStyleSheet(enzim_style)
 
         if self.simulate_yn or self.gpio_handler.enzim_yn == cf.STATE_ENZYME:
