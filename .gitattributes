@@ -1,2 +1,1 @@
 public/logs/temperture/log_temperture.csv filter=lfs diff=lfs merge=lfs -text
-public/models/yolo/cls_ppe_l.pt filter=lfs diff=lfs merge=lfs -text
