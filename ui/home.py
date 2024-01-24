@@ -18,18 +18,14 @@ from ui.flash import FlashWindow
 from ui.collect_data import CollectWindow
 import Jetson.GPIO as GPIO
 import threading
-
+from core.model_handler import logic
 class HomeWindow(QMainWindow):
     
     def __init__(self, start_yn=True):
         super().__init__()
         
-        if cf.CLASSIFY_ENGINE == 'YOLO':
-            from core.model_handler import InferenceYOLO as ModelEngine
-        elif cf.CLASSIFY_ENGINE == "ANSWOME_BACKBONE":
-            from core.model_handler import InferenceSwim as ModelEngine
 
-        self._logic = ModelEngine()
+        self._logic = logic
         self.gpio_handler = GPIOHandler()
         self.logger = CustomLoggerConfig.configure_logger()
         self.simulate_yn = None
@@ -364,3 +360,14 @@ class HomeWindow(QMainWindow):
                 self.simulate_yn = True
 
             self.update_button_styles()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.reset_ui_and_interlock()
+            print("Left Mouse Click")
+
+    def touchEvent(self, event):
+        print(event)
+        self.reset_ui_and_interlock()
+        print("Touch Event")
+    

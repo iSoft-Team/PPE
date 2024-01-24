@@ -32,14 +32,14 @@ class ProjectConfig(BaseSettings):
     ROOT_UI_PATH: str = "public/assets/images/"
     LOG_PATH: str = "public/logs"
     COLLECT_PATH: str = "public/collect"
-    ANOTATION_PATH: str = "public/data/annotations.txt"
-    CLASSIFY_ENGINE_PATH = "public/models/vit/vit_base_p32_224.py"
+    ANOTATION_PATH: str = "public/models/annotations.txt"
+    CLASSIFY_ENGINE_PATH = "public/models/swim/small_256.py"
     CLASSIFY_ENGINE = "YOLO"
     IMAGE_SIZE = (351, 224)
     
     STATE_INTERLOCK = 0 # Interlock at block -> state = 0, the oposite is None -> state = 1
-    STATE_MACHINE = 0 # Machine running 
-    STATE_ENZYME = 1 # Enzyme on
+    STATE_MACHINE = 1 # Machine running 
+    STATE_ENZYME = 0 # Enzyme on
     STATE_DOOR = 1 # Close
     
     STATE_BUZER = 0 # on

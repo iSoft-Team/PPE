@@ -14,18 +14,15 @@ from utils.utils import save_image
 from utils.logging import CustomLoggerConfig
 import threading
 import os
+from core.model_handler import logic
 
-if cf.CLASSIFY_ENGINE == 'YOLO':
-    from core.model_handler import InferenceYOLO as ModelEngine
-elif cf.CLASSIFY_ENGINE == "ANSWOME_BACKBONE":
-    from core.model_handler import InferenceSwim as ModelEngine
     
 class CollectWindow(QMainWindow):
     
     def __init__(self, start_yn=True):
         super().__init__()
         
-        self._logic = ModelEngine()
+        self._logic = logic
         self.logger = CustomLoggerConfig.configure_logger()
         self.detect_yn = False
         self.simulate_yn = False

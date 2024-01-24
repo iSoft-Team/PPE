@@ -8,12 +8,15 @@ from models.build import BuildNet
 import torch
 import cv2
 import os
+from utils.project_config import project_config as cf
+
 
 class InferenceBase:
     def __init__(self, model_path: str = "", conf=None):
         self._model = None  # Initialize this in the derived classes
         self.x1, self.y1, self.x2, self.y2 = cf.RECTANGLES[0]
         self._first_time = True
+        
     def _preprocess(self, frame, size_list):
         frame_copy = frame.copy()
         frame_copy = cv2.rotate(frame_copy, cv2.ROTATE_90_CLOCKWISE)
@@ -83,4 +86,17 @@ class InferenceSwim(InferenceBase):
     def _predict(self, frame):
         result = inference_model(self._model, frame, self._val_pipeline, self._classes_names, self._label_names)
         return result['pred_score'], result['pred_label'] == 1
+
+
+if cf.CLASSIFY_ENGINE == 'YOLO':
+    from core.model_handler import InferenceYOLO as ModelEngine
+elif cf.CLASSIFY_ENGINE == "ANSWOME_BACKBONE":
+    from core.model_handler import InferenceSwim as ModelEngine
+
+
+logic = ModelEngine()
+
+
+
+
 
