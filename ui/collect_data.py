@@ -35,7 +35,7 @@ class CollectWindow(QMainWindow):
 
         # Create a container widget to hold camera and button
         container_widget = QWidget(self)
-        container_layout = QHBoxLayout(container_widget)
+        container_layout = QVBoxLayout(container_widget)
         container_layout.setContentsMargins(0, 0, 0, 0)
         # Create a QLabel to display the camera feed
         self.camera_label = QLabel(self)
@@ -70,9 +70,9 @@ class CollectWindow(QMainWindow):
         camera_layout.addLayout(button_layout)
         camera_layout.addStretch(1)  # Add stretch to push buttons to the top
 
-        container_layout.addWidget(self.camera_label, 4)
-        spacer_item = QSpacerItem(0, 40, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        container_layout.addItem(spacer_item)
+        container_layout.addWidget(self.camera_label, 6)
+        # spacer_item = QSpacerItem(0, 40, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        # container_layout.addItem(spacer_item)
         
         # Create buttons
         self.pass_button = QPushButton("", self)
@@ -91,7 +91,7 @@ class CollectWindow(QMainWindow):
         self.fail_button.clicked.connect(self.fail_action)
 
         # Create horizontal layout and add buttons to it
-        self.button_layout = QVBoxLayout()
+        self.button_layout = QHBoxLayout()
         # self.button_layout.addSpacing(10)
         self.button_layout.addWidget(self.info_data_label, alignment=QtCore.Qt.AlignCenter)
         self.button_layout.addSpacing(250)
