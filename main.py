@@ -5,6 +5,8 @@ import subprocess
 from ui.flash import FlashWindow
 from PyQt5.QtCore import Qt, QCoreApplication
 
+#Tùng test 
+
 def on_application_exit():
     # This function will be called when the application is about to exit
     print("Application is about to exit.")
