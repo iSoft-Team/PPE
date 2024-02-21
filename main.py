@@ -10,7 +10,7 @@ def on_application_exit():
     print("Application is about to exit.")
 
 
-def main(mode):
+def main(mode): 
     if mode == 'deploy':
         from ui.home import HomeWindow as MainWindow
     elif mode == 'collect':
@@ -31,4 +31,4 @@ if __name__ == "__main__":
     main(args.mode)
 
     command = "sh ~/.xprofile"
-    subprocess.run(command, shell=True)
+    # subprocess.run(command, shell=True)

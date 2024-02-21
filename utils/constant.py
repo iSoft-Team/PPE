@@ -31,6 +31,7 @@ class Constant(BaseSettings):
     COLLECT_DATA: str = generate_style(icon_path("collect_data.png"))
     DETECT_PATH: str = generate_style(icon_path("detect-program.png"))
     CAMERA_DISCONNECT_PATH: str = icon_path("camera_disconnected.jpg")
+    SETTING_PATH: str = generate_style(icon_path("button-setting.png"))
 
 constant = Constant()
     

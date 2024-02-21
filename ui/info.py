@@ -21,7 +21,6 @@ class InfoWindow(QMainWindow):
         super().__init__()
 
         # Initialize the main window
-        self.init_main_window()
 
         # Create a container widget to hold camera and button
         container_widget = QWidget(self)
@@ -54,6 +53,9 @@ class InfoWindow(QMainWindow):
         self.setCentralWidget(container_widget)
         self.show_background()
         self.update_button_styles()
+
+        self.init_main_window()
+
 
     def init_main_window(self):
         width = 1920

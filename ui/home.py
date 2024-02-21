@@ -19,12 +19,13 @@ from ui.collect_data import CollectWindow
 import Jetson.GPIO as GPIO
 import threading
 from core.model_handler import logic
+
+
 class HomeWindow(QMainWindow):
     
     def __init__(self, start_yn=True):
         super().__init__()
         
-
         self._logic = logic
         self.gpio_handler = GPIOHandler()
         self.logger = CustomLoggerConfig.configure_logger()
@@ -46,7 +47,6 @@ class HomeWindow(QMainWindow):
         self.info_window = InfoWindow()
         self.info_window.hide()
 
-        self.init_main_window()
         
         # Create a container widget to hold camera and button
         container_widget = QWidget(self)
@@ -153,6 +153,9 @@ class HomeWindow(QMainWindow):
             # Start the camera when the program starts
             self.start_timer()
         
+        self.init_main_window()
+
+
     def init_camera(self):
         self.camera = cv2.VideoCapture(0)
         self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
