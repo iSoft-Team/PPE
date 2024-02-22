@@ -84,7 +84,7 @@ class InfoWindow(QMainWindow):
         bytes_per_line = 3 * width
         q_image = QImage(output_frame.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
         self.camera_label.setPixmap(QPixmap.fromImage(q_image))
-    
+
     def close_window(self):
         self.hide()
     

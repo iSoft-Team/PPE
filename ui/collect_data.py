@@ -24,6 +24,7 @@ class CollectWindow(QMainWindow):
         super().__init__()
 
         self.setting_window = SettingWindow()
+        self.setting_window.close()
         self._logic = logic
         self.logger = CustomLoggerConfig.configure_logger()
         self.detect_yn = False
@@ -138,6 +139,7 @@ class CollectWindow(QMainWindow):
             self.setting_window.raise_()
             self.timer.stop()
             self.setting_window.setup_gpio()
+            self.close()
 
         except Exception as e:
             print(f"An error occurred: {e}")

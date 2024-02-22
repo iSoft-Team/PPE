@@ -15,6 +15,8 @@ def main(mode):
         from ui.home import HomeWindow as MainWindow
     elif mode == 'collect':
         from ui.collect_data import CollectWindow as MainWindow
+    elif mode == 'setting':
+        from ui.setting_io import SettingWindow as MainWindow
 
     app = QApplication(sys.argv)
     window = MainWindow()
@@ -24,7 +26,7 @@ def main(mode):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Script description.')
 
-    parser.add_argument('--mode', choices=['deploy', 'collect'], default='deploy', help='Select the mode')
+    parser.add_argument('--mode', choices=['deploy', 'collect',"setting"], default='setting', help='Select the mode')
 
     args = parser.parse_args()
 

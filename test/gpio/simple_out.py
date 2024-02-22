@@ -14,11 +14,11 @@ def main():
     curr_value = GPIO.HIGH
     try:
         while True:
-            time.sleep(2)
+            time.sleep(4)
             # Toggle the output every second
             print("Outputting {} to pin {}".format(curr_value, output_pin))
             GPIO.output(output_pin, curr_value)
-            curr_value ^= GPIO.HIGH
+            curr_value = GPIO.HIGH
     finally:
         GPIO.cleanup()
 
