@@ -19,6 +19,7 @@ class SettingWindow(QMainWindow):
         self.curr_value_enzim = None
         self.curr_status_machine = None
         self.curr_is_wrong_open_door = None
+        self.curr_interlock_status = True
         self.timer = QTimer(self)
 
         # Tạo hai side bar
@@ -64,23 +65,24 @@ class SettingWindow(QMainWindow):
 
         container_widget = QWidget(self)
         container_layout = QVBoxLayout(container_widget)
-        container_layout.addLayout(header_layout, 1)  # Thêm header vào layout chính
-        container_layout.addWidget(splitter, 6)  # Thêm QSplitter vào layout chính
 
         # Tạo nút quit mới
-        self.quit_btn = QPushButton("QUIT", self)
-        self.quit_btn.setFixedSize(100, 100)
+        self.quit_btn = QPushButton("", self)
+        self.quit_btn.setFixedSize(30, 30)
+        self.quit_btn.setStyleSheet(c.CLOSE_PATH)  # Bạn cần thêm stylesheet cho nút này nếu cần
         self.quit_btn.clicked.connect(self.close_setting)
         self.quit_btn.setFocusPolicy(Qt.NoFocus)
-        self.quit_btn.setStyleSheet("text-align: center;")
+
         # Thêm nút quit vào layout của phần dưới
         bottom_layout = QHBoxLayout()
         bottom_layout.addStretch(1)  # Thêm một khoảng trống linh hoạt giữa nút close và nút quit
         bottom_layout.addWidget(self.quit_btn, alignment=Qt.AlignTop | Qt.AlignRight)
-
+        bottom_layout.setContentsMargins(0, 0, 25, 0)
         # Thêm bottom_layout vào container_layout trước top_layout
         container_layout.addLayout(bottom_layout, 0)  # Đặt index là 0 để thêm vào đầu tiên
 
+        container_layout.addLayout(header_layout, 1)  # Thêm header vào layout chính
+        container_layout.addWidget(splitter, 6)  # Thêm QSplitter vào layout chính
 
         self.setCentralWidget(container_widget)
 
@@ -90,6 +92,8 @@ class SettingWindow(QMainWindow):
         self.enzyme_btn.clicked.connect(lambda: self.handle_button_click(self.enzyme_btn))
         self.machine_run_btn.clicked.connect(lambda: self.handle_button_click(self.machine_run_btn))
         self.door_status_btn.clicked.connect(lambda: self.handle_button_click(self.door_status_btn))
+        self.interlock_btn.clicked.connect(lambda: self.handle_button_click(self.interlock_btn))
+        # self.setup_gpio()
 
     def start_timer(self):
         time.sleep(1)
@@ -97,26 +101,10 @@ class SettingWindow(QMainWindow):
 
     def setup_gpio(self):
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup([cf.GPIO_RESULT, cf.GPIO_SOUND, cf.GPIO_READY], GPIO.OUT)
+        GPIO.setup([cf.GPIO_RESULT, cf.GPIO_SOUND, cf.GPIO_READY], GPIO.OUT,initial=GPIO.LOW)
         GPIO.setup([cf.GPIO_ENZIM, cf.GPIO_MACHINE_RUN, cf.GPIO_OPEN_DOOR], GPIO.IN)
         self.timer.timeout.connect(self.update_logic)
-    
-    # def emit_signal(self):
-    #     if self.curr_value_enzim:
-    #         GPIO.output(cf.GPIO_RESULT, GPIO.HIGH)  # Xuất tín hiệu cao nếu curr_value_enzim là True
-    #     else:
-    #         GPIO.output(cf.GPIO_RESULT, GPIO.LOW)  # Xuất tín hiệu thấp nếu curr_value_enzim là False
 
-    #     if self.curr_status_machine:
-    #         GPIO.output(cf.GPIO_SOUND, GPIO.HIGH)  # Xuất tín hiệu cao nếu curr_status_machine là True
-    #     else:
-    #         GPIO.output(cf.GPIO_SOUND, GPIO.LOW)  # Xuất tín hiệu thấp nếu curr_status_machine là False
-
-    #     if self.curr_is_wrong_open_door:
-    #         GPIO.output(cf.GPIO_READY, GPIO.HIGH)  # Xuất tín hiệu cao nếu curr_is_wrong_open_door là True
-    #     else:
-    #         GPIO.output(cf.GPIO_READY, GPIO.LOW)  # Xuất tín hiệu thấp nếu curr_is_wrong_open_door là False
-    
     def init_main_window(self):
         width = 1920
         aspect_ratio = 9 / 16  # 9:16
@@ -130,7 +118,9 @@ class SettingWindow(QMainWindow):
         machine_status = c.MACHINE_ON_PATH if self.curr_status_machine == cf.STATE_MACHINE else c.MACHINE_OFF_PATH
         door_status = c.DOOR_CLOSE_PATH if self.curr_is_wrong_open_door == cf.STATE_DOOR else c.DOOR_OPEN_PATH
         enzim_style = c.ENZIN_LABEL_NO_ENZIM_PATH if self.curr_value_enzim == cf.STATE_ENZYME else c.ENZIN_LABEL_ENZIM_PATH
+        interlock_status = c.INTERLOCK_OFF_PATH if self.curr_interlock_status == cf.STATE_INTERLOCK else c.INTERLOCK_ON_PATH
         
+        self.interlock_btn.setStyleSheet(interlock_status)
         self.machine_run_btn.setStyleSheet(machine_status)
         self.door_status_btn.setStyleSheet(door_status)
         self.enzyme_btn.setStyleSheet(enzim_style)
@@ -155,22 +145,31 @@ class SettingWindow(QMainWindow):
         layout.addWidget(self.door_status_btn)
         
     def handle_button_click(self, button):
-        if button == self.enzyme_btn:
-                self.curr_value_enzim = not self.curr_value_enzim
-        elif button == self.machine_run_btn:
-            self.curr_status_machine = not self.curr_status_machine
-        elif button == self.door_status_btn:
-            self.curr_is_wrong_open_door = not self.curr_is_wrong_open_door
+        # if button == self.enzyme_btn:
+        #         self.curr_value_enzim = not self.curr_value_enzim
+        # elif button == self.machine_run_btn:
+        #     self.curr_status_machine = not self.curr_status_machine
+        # elif button == self.door_status_btn:
+        #     self.curr_is_wrong_open_door = not self.curr_is_wrong_open_door
+        if button == self.interlock_btn:
+            self.curr_interlock_status = not self.curr_interlock_status
 
         self.update_button_styles()
 
     def create_right_buttons(self, widget):
-        self.interlock_label = QLabel("ON", widget)
-        self.interlock_label.setFixedHeight(100)
-        self.interlock_label.setFixedWidth(100)
+        self.interlock_btn = QPushButton("", widget)
 
-        layout = QVBoxLayout(widget)
-        layout.addWidget(self.interlock_label)
+        self.interlock_btn.setFixedHeight(130)
+        self.interlock_btn.setFixedWidth(175)
+
+        layout = QHBoxLayout(widget)
+        layout.addWidget(self.interlock_btn)
+
+        # self.interlock_label = QLabel("ON", widget)
+        # self.interlock_label.setFixedHeight(100)
+        # self.interlock_label.setFixedWidth(100)
+
+        # layout.addWidget(self.interlock_label)
 
     def update_button_by_enzim(self):
         value = GPIO.input(cf.GPIO_ENZIM)
@@ -191,10 +190,18 @@ class SettingWindow(QMainWindow):
             print(f"curr_is_wrong_open_door: {value}")
             self.curr_is_wrong_open_door = value
 
+    def update_status_instalock(self):
+        if self.curr_interlock_status == False:
+            GPIO.output(cf.GPIO_SOUND, GPIO.LOW)
+        else:
+            GPIO.output(cf.GPIO_SOUND, GPIO.HIGH)
+        # print(f"curr_interlock_status: {self.curr_interlock_status}") #For test output signal
+
     def update_logic(self):
         self.update_button_by_enzim()
         self.update_status_machine()
         self.update_status_error_door()
+        self.update_status_instalock()
         self.update_button_styles()
         
     def close_setting(self):

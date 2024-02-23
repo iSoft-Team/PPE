@@ -27,6 +27,8 @@ class Constant(BaseSettings):
     DOOR_OPEN_PATH: str = generate_style(icon_path("door-open.png"))
     MACHINE_ON_PATH: str = generate_style(icon_path("machine-on.png"))
     MACHINE_OFF_PATH: str = generate_style(icon_path("machine-off.png"))
+    INTERLOCK_ON_PATH: str = generate_style(icon_path("Machine ON.png"))
+    INTERLOCK_OFF_PATH: str = generate_style(icon_path("Machine OFF.png"))
     BUTTON_BG_PATH: str = generate_style(icon_path("Rectangle 208.png"))
     COLLECT_DATA: str = generate_style(icon_path("collect_data.png"))
     DETECT_PATH: str = generate_style(icon_path("detect-program.png"))

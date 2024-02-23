@@ -2,7 +2,7 @@ import Jetson.GPIO as GPIO
 import time
 
 # Pin Definitions
-input_pin = 7                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               # BCM pin 18, BOARD pin 12
+input_pin = [16,18,22]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           # BCM pin 18, BOARD pin 12
 
 def main():
     prev_value = None
