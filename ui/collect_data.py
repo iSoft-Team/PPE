@@ -24,7 +24,7 @@ class CollectWindow(QMainWindow):
         super().__init__()
 
         self.setting_window = SettingWindow()
-        self.setting_window.close()
+        self.setting_window.hide()
         self._logic = logic
         self.logger = CustomLoggerConfig.configure_logger()
         self.detect_yn = False
@@ -132,14 +132,16 @@ class CollectWindow(QMainWindow):
     
     def show_setting(self):
         try:
-            self.setting_button.setEnabled(False)
-            self.timer.start(2000)
+            # self.setting_button.setEnabled(False)
+            # self.timer.start(2000)
 
             self.setting_window.show()
             self.setting_window.raise_()
-            self.timer.stop()
+            self.setting_window.showFullScreen()
+            # self.timer.stop()
+
             self.setting_window.setup_gpio()
-            self.close()
+            # self.hide()
 
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -156,6 +158,7 @@ class CollectWindow(QMainWindow):
         home_window.raise_()
         home_window.init_camera()
         home_window.start_timer()
+        self.setting_window.close()
         self.close()
 
     def enable_home_button(self):

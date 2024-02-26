@@ -47,6 +47,7 @@ class HomeWindow(QMainWindow):
         self.info_window = InfoWindow()
         self.info_window.hide()
 
+
         
         # Create a container widget to hold camera and button
         container_widget = QWidget(self)

@@ -9,7 +9,6 @@ import time
 import threading
 import Jetson.GPIO as GPIO
 import sys
-from core.gpio_handler import GPIOHandler
 
 class SettingWindow(QMainWindow):
     def __init__(self):
@@ -19,7 +18,7 @@ class SettingWindow(QMainWindow):
         self.curr_value_enzim = None
         self.curr_status_machine = None
         self.curr_is_wrong_open_door = None
-        self.curr_interlock_status = True
+        self.curr_interlock_status = False
         self.timer = QTimer(self)
 
         # Tạo hai side bar
@@ -205,8 +204,9 @@ class SettingWindow(QMainWindow):
         self.update_button_styles()
         
     def close_setting(self):
-        self.close()
-        sys.exit()
+        self.hide()
+        # GPIO.cleanup()
+        # sys.exit()
 
     def show_collect_window(self):
         try:
