@@ -19,6 +19,7 @@ class SettingWindow(QMainWindow):
         self.curr_status_machine = None
         self.curr_is_wrong_open_door = None
         self.curr_interlock_status = False
+        self.curr_system_status = True
         self.timer = QTimer(self)
 
         # Tạo hai side bar
@@ -92,6 +93,8 @@ class SettingWindow(QMainWindow):
         self.machine_run_btn.clicked.connect(lambda: self.handle_button_click(self.machine_run_btn))
         self.door_status_btn.clicked.connect(lambda: self.handle_button_click(self.door_status_btn))
         self.interlock_btn.clicked.connect(lambda: self.handle_button_click(self.interlock_btn))
+        self.system_status_btn.clicked.connect(lambda: self.handle_button_click(self.system_status_btn))
+
         # self.setup_gpio()
 
     def start_timer(self):
@@ -118,11 +121,14 @@ class SettingWindow(QMainWindow):
         door_status = c.DOOR_CLOSE_PATH if self.curr_is_wrong_open_door == cf.STATE_DOOR else c.DOOR_OPEN_PATH
         enzim_style = c.ENZIN_LABEL_NO_ENZIM_PATH if self.curr_value_enzim == cf.STATE_ENZYME else c.ENZIN_LABEL_ENZIM_PATH
         interlock_status = c.INTERLOCK_OFF_PATH if self.curr_interlock_status == cf.STATE_INTERLOCK else c.INTERLOCK_ON_PATH
-        
-        self.interlock_btn.setStyleSheet(interlock_status)
+        system_status = c.SYSTEM_READY_PATH if self.curr_system_status == cf.STATE_READY else c.SYSTEM_NOT_READY_PATH
+
         self.machine_run_btn.setStyleSheet(machine_status)
         self.door_status_btn.setStyleSheet(door_status)
         self.enzyme_btn.setStyleSheet(enzim_style)
+        self.interlock_btn.setStyleSheet(interlock_status)
+        self.system_status_btn.setStyleSheet(system_status)
+
 
     def create_left_buttons(self, widget):
         self.enzyme_btn = QPushButton("", widget)
@@ -152,17 +158,25 @@ class SettingWindow(QMainWindow):
         #     self.curr_is_wrong_open_door = not self.curr_is_wrong_open_door
         if button == self.interlock_btn:
             self.curr_interlock_status = not self.curr_interlock_status
+        elif button == self.system_status_btn:
+            self.curr_system_status = not self.curr_system_status
 
         self.update_button_styles()
 
     def create_right_buttons(self, widget):
         self.interlock_btn = QPushButton("", widget)
+        self.system_status_btn = QPushButton("", widget)
 
-        self.interlock_btn.setFixedHeight(130)
-        self.interlock_btn.setFixedWidth(175)
+        self.interlock_btn.setFixedHeight(150)
+        self.interlock_btn.setFixedWidth(180)
+
+        self.system_status_btn.setFixedHeight(160)
+        self.system_status_btn.setFixedWidth(150)
 
         layout = QHBoxLayout(widget)
         layout.addWidget(self.interlock_btn)
+        layout.addWidget(self.system_status_btn)
+
 
         # self.interlock_label = QLabel("ON", widget)
         # self.interlock_label.setFixedHeight(100)
@@ -189,18 +203,25 @@ class SettingWindow(QMainWindow):
             print(f"curr_is_wrong_open_door: {value}")
             self.curr_is_wrong_open_door = value
 
-    def update_status_instalock(self):
+    def update_status_interlock(self):
         if self.curr_interlock_status == False:
-            GPIO.output(cf.GPIO_SOUND, GPIO.LOW)
+            GPIO.output(cf.GPIO_RESULT, GPIO.LOW)
         else:
-            GPIO.output(cf.GPIO_SOUND, GPIO.HIGH)
-        # print(f"curr_interlock_status: {self.curr_interlock_status}") #For test output signal
+            GPIO.output(cf.GPIO_RESULT, GPIO.HIGH)
+        print(f"curr_interlock_status: {self.curr_interlock_status}") #For test output signal
+
+    def update_status_system(self):
+        if self.curr_system_status == False:
+            GPIO.output(cf.GPIO_READY, GPIO.LOW)
+        else:
+            GPIO.output(cf.GPIO_READY, GPIO.HIGH)
 
     def update_logic(self):
         self.update_button_by_enzim()
         self.update_status_machine()
         self.update_status_error_door()
-        self.update_status_instalock()
+        self.update_status_interlock()
+        self.update_status_system()
         self.update_button_styles()
         
     def close_setting(self):
@@ -216,7 +237,6 @@ class SettingWindow(QMainWindow):
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    
     def closeEvent(self, event):
         super().closeEvent(event)
 
