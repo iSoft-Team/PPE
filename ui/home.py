@@ -38,8 +38,7 @@ class HomeWindow(QMainWindow):
         self.frame_detect_done = None
         self.count_sound = 0
         
-        self.collect_window = CollectWindow(start_yn=False)
-        self.collect_window.hide()
+   
 
         self.flash_window = FlashWindow()
         self.flash_window.show()
@@ -172,6 +171,7 @@ class HomeWindow(QMainWindow):
 
         self.camera.release()
         self.timer.stop()
+        self.collect_window = CollectWindow(start_yn=False)
         self.collect_window.show()
         self.collect_window.raise_()
         self.collect_window.showFullScreen()
@@ -374,4 +374,3 @@ class HomeWindow(QMainWindow):
         print(event)
         self.reset_ui_and_interlock()
         print("Touch Event")
-    

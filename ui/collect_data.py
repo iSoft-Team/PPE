@@ -158,9 +158,9 @@ class CollectWindow(QMainWindow):
         home_window = HomeWindow(start_yn=False)
         home_window.show()
         home_window.raise_()
+        home_window.showFullScreen()
         home_window.init_camera()
         home_window.start_timer()
-        self.setting_window.close()
         self.close()
 
     def enable_home_button(self):
