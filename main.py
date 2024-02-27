@@ -34,3 +34,4 @@ if __name__ == "__main__":
 
     command = "sh ~/.xprofile"
     subprocess.run(command, shell=True)
+    #123123
