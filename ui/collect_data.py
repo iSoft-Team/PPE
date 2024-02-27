@@ -139,6 +139,8 @@ class CollectWindow(QMainWindow):
             self.setting_window.raise_()
             self.setting_window.showFullScreen()
             # self.timer.stop()
+            self.setting_window.curr_interlock_status = True
+            self.setting_window.curr_system_status = True
 
             self.setting_window.setup_gpio()
             # self.hide()

@@ -18,8 +18,9 @@ class SettingWindow(QMainWindow):
         self.curr_value_enzim = None
         self.curr_status_machine = None
         self.curr_is_wrong_open_door = None
-        self.curr_interlock_status = False
-        self.curr_system_status = True
+        self.curr_interlock_status = None
+        self.curr_system_status = None
+
         self.timer = QTimer(self)
 
         # Tạo hai side bar
@@ -87,11 +88,8 @@ class SettingWindow(QMainWindow):
         self.setCentralWidget(container_widget)
 
         self.init_main_window()
-        self.update_button_styles()
         self.start_timer()
-        self.enzyme_btn.clicked.connect(lambda: self.handle_button_click(self.enzyme_btn))
-        self.machine_run_btn.clicked.connect(lambda: self.handle_button_click(self.machine_run_btn))
-        self.door_status_btn.clicked.connect(lambda: self.handle_button_click(self.door_status_btn))
+        self.update_button_styles()
         self.interlock_btn.clicked.connect(lambda: self.handle_button_click(self.interlock_btn))
         self.system_status_btn.clicked.connect(lambda: self.handle_button_click(self.system_status_btn))
 
@@ -103,7 +101,8 @@ class SettingWindow(QMainWindow):
 
     def setup_gpio(self):
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup([cf.GPIO_RESULT, cf.GPIO_SOUND, cf.GPIO_READY], GPIO.OUT,initial=GPIO.LOW)
+        GPIO.setup(cf.GPIO_RESULT, GPIO.OUT)
+        GPIO.setup(cf.GPIO_READY, GPIO.OUT)
         GPIO.setup([cf.GPIO_ENZIM, cf.GPIO_MACHINE_RUN, cf.GPIO_OPEN_DOOR], GPIO.IN)
         self.timer.timeout.connect(self.update_logic)
 
@@ -120,8 +119,8 @@ class SettingWindow(QMainWindow):
         machine_status = c.MACHINE_ON_PATH if self.curr_status_machine == cf.STATE_MACHINE else c.MACHINE_OFF_PATH
         door_status = c.DOOR_CLOSE_PATH if self.curr_is_wrong_open_door == cf.STATE_DOOR else c.DOOR_OPEN_PATH
         enzim_style = c.ENZIN_LABEL_NO_ENZIM_PATH if self.curr_value_enzim == cf.STATE_ENZYME else c.ENZIN_LABEL_ENZIM_PATH
-        interlock_status = c.INTERLOCK_OFF_PATH if self.curr_interlock_status == cf.STATE_INTERLOCK else c.INTERLOCK_ON_PATH
-        system_status = c.SYSTEM_READY_PATH if self.curr_system_status == cf.STATE_READY else c.SYSTEM_NOT_READY_PATH
+        interlock_status = c.INTERLOCK_ON_PATH if self.curr_interlock_status == cf.STATE_INTERLOCK else c.INTERLOCK_OFF_PATH
+        system_status = c.SYSTEM_NOT_READY_PATH if self.curr_system_status == cf.STATE_READY else c.SYSTEM_READY_PATH
 
         self.machine_run_btn.setStyleSheet(machine_status)
         self.door_status_btn.setStyleSheet(door_status)
@@ -150,16 +149,13 @@ class SettingWindow(QMainWindow):
         layout.addWidget(self.door_status_btn)
         
     def handle_button_click(self, button):
-        # if button == self.enzyme_btn:
-        #         self.curr_value_enzim = not self.curr_value_enzim
-        # elif button == self.machine_run_btn:
-        #     self.curr_status_machine = not self.curr_status_machine
-        # elif button == self.door_status_btn:
-        #     self.curr_is_wrong_open_door = not self.curr_is_wrong_open_door
         if button == self.interlock_btn:
             self.curr_interlock_status = not self.curr_interlock_status
+            GPIO.output(cf.GPIO_RESULT, self.curr_interlock_status)
+
         elif button == self.system_status_btn:
             self.curr_system_status = not self.curr_system_status
+            GPIO.output(cf.GPIO_READY, self.curr_system_status)
 
         self.update_button_styles()
 
@@ -204,28 +200,33 @@ class SettingWindow(QMainWindow):
             self.curr_is_wrong_open_door = value
 
     def update_status_interlock(self):
+
         if self.curr_interlock_status == False:
             GPIO.output(cf.GPIO_RESULT, GPIO.LOW)
+            print("interlock low")
         else:
             GPIO.output(cf.GPIO_RESULT, GPIO.HIGH)
-        print(f"curr_interlock_status: {self.curr_interlock_status}") #For test output signal
+            print("interlock high")
+
 
     def update_status_system(self):
         if self.curr_system_status == False:
             GPIO.output(cf.GPIO_READY, GPIO.LOW)
+            print("system low")
+
         else:
             GPIO.output(cf.GPIO_READY, GPIO.HIGH)
+            print("system high")
+
 
     def update_logic(self):
         self.update_button_by_enzim()
         self.update_status_machine()
         self.update_status_error_door()
-        self.update_status_interlock()
-        self.update_status_system()
         self.update_button_styles()
         
     def close_setting(self):
-        self.hide()
+        self.close()
         # GPIO.cleanup()
         # sys.exit()
 
