@@ -5,18 +5,18 @@ import subprocess
 from ui.flash import FlashWindow
 from PyQt5.QtCore import Qt, QCoreApplication
 
-#Tùng test 
-
 def on_application_exit():
     # This function will be called when the application is about to exit
     print("Application is about to exit.")
 
 
-def main(mode):
+def main(mode): 
     if mode == 'deploy':
         from ui.home import HomeWindow as MainWindow
     elif mode == 'collect':
         from ui.collect_data import CollectWindow as MainWindow
+    elif mode == 'setting':
+        from ui.setting_io import SettingWindow as MainWindow
 
     app = QApplication(sys.argv)
     window = MainWindow()
@@ -26,12 +26,11 @@ def main(mode):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Script description.')
 
-    parser.add_argument('--mode', choices=['deploy', 'collect'], default='deploy', help='Select the mode')
+    parser.add_argument('--mode', choices=['deploy', 'collect',"setting"], default='deploy', help='Select the mode')
 
     args = parser.parse_args()
 
     main(args.mode)
 
     command = "sh ~/.xprofile"
-    subprocess.run(command, shell=True)
-    #123123
+    # subprocess.run(command, shell=True)

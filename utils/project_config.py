@@ -11,7 +11,7 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # Define a Pydantic configuration class
 class ProjectConfig(BaseSettings):
-    RECTANGLES: list = [(215, 383, 841, 1165)]
+    RECTANGLES: list = [(500, 90, 1200, 970)]
     COLORS_MAPPING: dict = {2: (0, 0, 255), 1: (88, 214, 141), 0: (0, 0, 255)}
     WIDTH: int = 1280
     HEIGHT: int = 720
@@ -42,7 +42,7 @@ class ProjectConfig(BaseSettings):
     STATE_ENZYME = 0 # Enzyme on
     STATE_DOOR = 1 # Close
     
-    STATE_BUZER = 0 # on
+    STATE_BUZER = 0 # 0 is on, 1 is off
     STATE_READY = 1 # system ready
     
     STATE_DEFAULT = 0

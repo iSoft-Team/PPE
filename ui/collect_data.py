@@ -15,13 +15,16 @@ from utils.logging import CustomLoggerConfig
 import threading
 import os
 from core.model_handler import logic
+from ui.setting_io import SettingWindow
 
     
 class CollectWindow(QMainWindow):
     
     def __init__(self, start_yn=True):
         super().__init__()
-        
+
+        self.setting_window = SettingWindow()
+        self.setting_window.hide()
         self._logic = logic
         self.logger = CustomLoggerConfig.configure_logger()
         self.detect_yn = False
@@ -31,11 +34,10 @@ class CollectWindow(QMainWindow):
         self.frame_crop = None
 
 
-        self.init_main_window()
 
         # Create a container widget to hold camera and button
         container_widget = QWidget(self)
-        container_layout = QVBoxLayout(container_widget)
+        container_layout = QHBoxLayout(container_widget)
         container_layout.setContentsMargins(0, 0, 0, 0)
         # Create a QLabel to display the camera feed
         self.camera_label = QLabel(self)
@@ -70,13 +72,20 @@ class CollectWindow(QMainWindow):
         camera_layout.addLayout(button_layout)
         camera_layout.addStretch(1)  # Add stretch to push buttons to the top
 
-        container_layout.addWidget(self.camera_label, 6)
-        # spacer_item = QSpacerItem(0, 40, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        # container_layout.addItem(spacer_item)
+        container_layout.addWidget(self.camera_label, 4)
+        spacer_item = QSpacerItem(0, 40, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        container_layout.addItem(spacer_item)
         
         # Create buttons
+        self.setting_button = QPushButton("", self)
         self.pass_button = QPushButton("", self)
         self.fail_button = QPushButton("", self)
+
+        # Set attributes for Setting button
+        self.setting_button.setEnabled(True)
+        self.setting_button.setFixedHeight(216)
+        self.setting_button.setFixedWidth(256)
+        self.setting_button.clicked.connect(self.show_setting)
 
         # Set attributes for Pass button
         self.pass_button.setEnabled(True)
@@ -91,10 +100,12 @@ class CollectWindow(QMainWindow):
         self.fail_button.clicked.connect(self.fail_action)
 
         # Create horizontal layout and add buttons to it
-        self.button_layout = QHBoxLayout()
+        self.button_layout = QVBoxLayout()
         # self.button_layout.addSpacing(10)
         self.button_layout.addWidget(self.info_data_label, alignment=QtCore.Qt.AlignCenter)
-        self.button_layout.addSpacing(250)
+        self.button_layout.addSpacing(30)
+        self.button_layout.addWidget(self.setting_button, alignment=QtCore.Qt.AlignCenter)
+        self.button_layout.addSpacing(30)
         self.button_layout.addWidget(self.pass_button, alignment=QtCore.Qt.AlignCenter)
         self.button_layout.addSpacing(30)
         self.button_layout.addWidget(self.fail_button, alignment=QtCore.Qt.AlignCenter)
@@ -108,6 +119,9 @@ class CollectWindow(QMainWindow):
         if start_yn:
             self.init_camera()
             self.start_timer()
+
+        self.init_main_window()
+        
     
     def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -116,6 +130,22 @@ class CollectWindow(QMainWindow):
         elif event.button() == Qt.RightButton:
             print("Right mouse button double-clicked")
     
+    def show_setting(self):
+        try:
+            # self.setting_button.setEnabled(False)
+            # self.timer.start(2000)
+
+            self.setting_window.show()
+            self.setting_window.raise_()
+            self.setting_window.showFullScreen()
+            # self.timer.stop()
+
+            self.setting_window.setup_gpio()
+            # self.hide()
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
     def show_home(self):
         self.home_btn.setEnabled(False)
         # Start the timer to enable the button after 5000 milliseconds (5 seconds)
@@ -126,9 +156,9 @@ class CollectWindow(QMainWindow):
         home_window = HomeWindow(start_yn=False)
         home_window.show()
         home_window.raise_()
-        home_window.showFullScreen()
         home_window.init_camera()
         home_window.start_timer()
+        self.setting_window.close()
         self.close()
 
     def enable_home_button(self):
@@ -173,6 +203,7 @@ class CollectWindow(QMainWindow):
     
     def update_button_styles(self):
         self.home_btn.setStyleSheet(c.DETECT_PATH)
+        self.setting_button.setStyleSheet(c.SETTING_PATH)
         self.pass_button.setStyleSheet(c.PASS_PATH)
         self.fail_button.setStyleSheet(c.FAIL_PATH)
     
@@ -216,7 +247,7 @@ class CollectWindow(QMainWindow):
         # Stop the camera when the application is closed
         self.camera.release()
         self.timer.stop()
-        self.gpio_handler.cleanup()
+        # self.gpio_handler.cleanup()
         super().closeEvent(event)
         
     def keyPressEvent(self, event):

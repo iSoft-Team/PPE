@@ -21,7 +21,6 @@ class InfoWindow(QMainWindow):
         super().__init__()
 
         # Initialize the main window
-        self.init_main_window()
 
         # Create a container widget to hold camera and button
         container_widget = QWidget(self)
@@ -55,6 +54,9 @@ class InfoWindow(QMainWindow):
         self.show_background()
         self.update_button_styles()
 
+        self.init_main_window()
+
+
     def init_main_window(self):
         width = 1920
         aspect_ratio = 9 / 16  # 9:16
@@ -82,7 +84,7 @@ class InfoWindow(QMainWindow):
         bytes_per_line = 3 * width
         q_image = QImage(output_frame.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
         self.camera_label.setPixmap(QPixmap.fromImage(q_image))
-    
+
     def close_window(self):
         self.hide()
     
