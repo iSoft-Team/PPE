@@ -216,19 +216,12 @@ class CollectWindow(QMainWindow):
         # Stop the camera when the application is closed
         self.camera.release()
         self.timer.stop()
-        self.gpio_handler.cleanup()
         super().closeEvent(event)
         
     def keyPressEvent(self, event):
-        
         if event.key() == Qt.Key_Q:
             sys.exit()
             
-        elif event.key() == Qt.Key_S:
-            self.gpio_handler.enzim_yn = not self.gpio_handler.enzim_yn
-            if not self.gpio_handler.enzim_yn:
-                self.simulate_yn = False
-                self.start_detect = False
-            self.update_button_styles()
+
             
         
