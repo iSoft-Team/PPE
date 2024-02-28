@@ -14,14 +14,14 @@ class SettingWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
-
         self.curr_value_enzim = None
         self.curr_status_machine = None
         self.curr_is_wrong_open_door = None
-        self.curr_interlock_status = None
-        self.curr_system_status = None
+        self.curr_interlock_status = True
+        self.curr_system_status = True
 
         self.timer = QTimer(self)
+        self.setup_gpio()
 
         # Tạo hai side bar
         input_side = QWidget(self)
@@ -93,7 +93,6 @@ class SettingWindow(QMainWindow):
         self.interlock_btn.clicked.connect(lambda: self.handle_button_click(self.interlock_btn))
         self.system_status_btn.clicked.connect(lambda: self.handle_button_click(self.system_status_btn))
 
-        # self.setup_gpio()
 
     def start_timer(self):
         time.sleep(1)
@@ -101,8 +100,7 @@ class SettingWindow(QMainWindow):
 
     def setup_gpio(self):
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(cf.GPIO_RESULT, GPIO.OUT)
-        GPIO.setup(cf.GPIO_READY, GPIO.OUT)
+        GPIO.setup([cf.GPIO_RESULT,cf.GPIO_READY], GPIO.OUT,initial=GPIO.HIGH)
         GPIO.setup([cf.GPIO_ENZIM, cf.GPIO_MACHINE_RUN, cf.GPIO_OPEN_DOOR], GPIO.IN)
         self.timer.timeout.connect(self.update_logic)
 
@@ -226,9 +224,9 @@ class SettingWindow(QMainWindow):
         self.update_button_styles()
         
     def close_setting(self):
-        self.close()
-        # GPIO.cleanup()
-        # sys.exit()
+        # self.close()
+        GPIO.cleanup()
+        sys.exit()
 
     def show_collect_window(self):
         try:
@@ -239,6 +237,7 @@ class SettingWindow(QMainWindow):
             print(f"An error occurred: {e}")
 
     def closeEvent(self, event):
+        print("Close")
         super().closeEvent(event)
 
     def keyPressEvent(self, event):

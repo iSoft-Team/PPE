@@ -26,7 +26,7 @@ def main(mode):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Script description.')
 
-    parser.add_argument('--mode', choices=['deploy', 'collect',"setting"], default='deploy', help='Select the mode')
+    parser.add_argument('--mode', choices=['deploy', 'collect',"setting"], default='setting', help='Select the mode')
 
     args = parser.parse_args()
 
