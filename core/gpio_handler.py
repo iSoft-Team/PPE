@@ -6,6 +6,7 @@ import threading
 
 class GPIOHandler:
     def __init__(self):
+        GPIO.cleanup()
         self.enzim_yn = False
         self.detect_yn = False
         self.reset_yn = False

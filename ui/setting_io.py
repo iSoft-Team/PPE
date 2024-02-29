@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
 from PyQt5.QtCore import Qt, QTimer
 from utils.constant import constant as c
 from utils.project_config import project_config as cf
+from utils.project_config import cons
+
 from PyQt5 import QtCore
 import time
 import threading
@@ -21,7 +23,9 @@ class SettingWindow(QMainWindow):
         self.curr_system_status = True
 
         self.timer = QTimer(self)
-        self.setup_gpio()
+        # self.setup_gpio()
+        GPIO.output(cf.GPIO_RESULT, GPIO.HIGH)
+        GPIO.output(cf.GPIO_READY, GPIO.HIGH)
 
         # Tạo hai side bar
         input_side = QWidget(self)
@@ -96,12 +100,12 @@ class SettingWindow(QMainWindow):
 
     def start_timer(self):
         time.sleep(1)
-        self.timer.start(66)  
+        self.timer.start(33)  
 
     def setup_gpio(self):
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup([cf.GPIO_RESULT,cf.GPIO_READY], GPIO.OUT,initial=GPIO.HIGH)
-        GPIO.setup([cf.GPIO_ENZIM, cf.GPIO_MACHINE_RUN, cf.GPIO_OPEN_DOOR], GPIO.IN)
+        # GPIO.setmode(GPIO.BOARD)
+        # GPIO.setup([cf.GPIO_RESULT,cf.GPIO_READY], GPIO.OUT,initial=GPIO.HIGH)
+        # GPIO.setup([cf.GPIO_ENZIM, cf.GPIO_MACHINE_RUN, cf.GPIO_OPEN_DOOR], GPIO.IN)
         self.timer.timeout.connect(self.update_logic)
 
     def init_main_window(self):
@@ -184,7 +188,6 @@ class SettingWindow(QMainWindow):
             print(f"curr_value_enzim: {value}")
             self.curr_value_enzim = value
 
-
     def update_status_machine(self):
         value = GPIO.input(cf.GPIO_MACHINE_RUN)
         if value != self.curr_status_machine:
@@ -197,44 +200,17 @@ class SettingWindow(QMainWindow):
             print(f"curr_is_wrong_open_door: {value}")
             self.curr_is_wrong_open_door = value
 
-    def update_status_interlock(self):
-
-        if self.curr_interlock_status == False:
-            GPIO.output(cf.GPIO_RESULT, GPIO.LOW)
-            print("interlock low")
-        else:
-            GPIO.output(cf.GPIO_RESULT, GPIO.HIGH)
-            print("interlock high")
-
-
-    def update_status_system(self):
-        if self.curr_system_status == False:
-            GPIO.output(cf.GPIO_READY, GPIO.LOW)
-            print("system low")
-
-        else:
-            GPIO.output(cf.GPIO_READY, GPIO.HIGH)
-            print("system high")
-
-
     def update_logic(self):
-        self.update_button_by_enzim()
-        self.update_status_machine()
-        self.update_status_error_door()
+        # self.update_button_by_enzim()
+        # self.update_status_machine()
+        # self.update_status_error_door()
         self.update_button_styles()
         
     def close_setting(self):
-        # self.close()
-        GPIO.cleanup()
-        sys.exit()
-
-    def show_collect_window(self):
-        try:
-            self.collect_window.show()
-            self.collect_window.raise_()
-
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        self.close()
+        # GPIO.cleanup()
+        cons.check_show_collect = True
+        print("Close setting")
 
     def closeEvent(self, event):
         print("Close")

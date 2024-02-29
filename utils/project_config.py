@@ -46,10 +46,11 @@ class ProjectConfig(BaseSettings):
     STATE_READY = 1 # system ready
     
     STATE_DEFAULT = 0
+
+class Contants:
+    def __init__(self):
+        self.check_show_home = False
+        self.check_show_collect = False
     
 project_config = ProjectConfig()
-
-
-
-
-
+cons = Contants()
