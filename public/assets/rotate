@@ -5,6 +5,8 @@ gsettings set org.gnome.desktop.session idle-delay 0
 # Check if the touch device is present
 if xinput list | grep -q ".*_CONTROL"; then
     # Rotate the display
+    xrandr --output DP-1 --mode 1920x1080
+
     xrandr --output DP-1 --rotate left
     
     # Get the ID of the touch device

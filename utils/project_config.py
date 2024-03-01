@@ -42,14 +42,17 @@ class ProjectConfig(BaseSettings):
     STATE_ENZYME = 0 # Enzyme on
     STATE_DOOR = 1 # Close
     
-    STATE_BUZER = 1 # on
+    STATE_BUZER = 0 # 0 is on, 1 is off
+    
     STATE_READY = 1 # system ready
     
     STATE_DEFAULT = 0
+    NO_WARM_UP = 5
+
+class Contants:
+    def __init__(self):
+        self.check_show_home = False
+        self.check_show_collect = False
     
 project_config = ProjectConfig()
-
-
-
-
-
+cons = Contants()

@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5 import QtCore
 from utils.constant import constant as c
 from utils.project_config import project_config as cf
+from utils.project_config import cons
 from core.gpio_handler import GPIOHandler
 import time
 import datetime
@@ -19,12 +20,13 @@ from ui.collect_data import CollectWindow
 import Jetson.GPIO as GPIO
 import threading
 from core.model_handler import logic
+from utils.utils_cv import VideoCaptureWrapper
+
 class HomeWindow(QMainWindow):
     
     def __init__(self, start_yn=True):
         super().__init__()
         
-
         self._logic = logic
         self.gpio_handler = GPIOHandler()
         self.logger = CustomLoggerConfig.configure_logger()
@@ -36,18 +38,21 @@ class HomeWindow(QMainWindow):
         self.curr_is_wrong_open_door = None
         self.frame_detect_done = None
         self.count_sound = 0
+        self.is_show_collect = False
+        self.warm_up = 0
+        self._start_time = time.time()
+        self._end_time = time.time()
+        self._FPS = 0
         
-        self.collect_window = CollectWindow(start_yn=False)
-        self.collect_window.hide()
+        self.timer_open_collect = QTimer(self)
 
+        # initialize window
         self.flash_window = FlashWindow()
         self.flash_window.show()
         self.flash_window.raise_()
         self.info_window = InfoWindow()
         self.info_window.hide()
 
-        self.init_main_window()
-        
         # Create a container widget to hold camera and button
         container_widget = QWidget(self)
         container_layout = QHBoxLayout(container_widget)
@@ -87,8 +92,8 @@ class HomeWindow(QMainWindow):
         self.collect.clicked.connect(self.show_collect_screen)
         self.collect.setStyleSheet(c.COLLECT_DATA)
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.enable_collect_button)
+        self.timer_open_collect = QTimer(self)
+        self.timer_open_collect.timeout.connect(self.enable_collect_button)
         
         # Add the second button to the layout
         button_layout.addWidget(self.simulate_btn)
@@ -153,8 +158,12 @@ class HomeWindow(QMainWindow):
             # Start the camera when the program starts
             self.start_timer()
         
+        self.init_main_window()
+
+
+
     def init_camera(self):
-        self.camera = cv2.VideoCapture(0)
+        self.camera = VideoCaptureWrapper(0)
         self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
         self.timer = QTimer(self)
@@ -164,22 +173,21 @@ class HomeWindow(QMainWindow):
         print("show_collect_screen")
         self.collect.setEnabled(False)
         # Start the timer to enable the button after 5000 milliseconds (5 seconds)
-        self.timer.start(5000)
-
+        self.timer_open_collect.start(5000)
         self.camera.release()
-        self.timer.stop()
+        self.is_show_collect = True
+        self.collect_window = CollectWindow(start_yn=False)
         self.collect_window.show()
         self.collect_window.raise_()
         self.collect_window.showFullScreen()
         self.collect_window.init_camera()
         self.collect_window.start_timer()
         self.flash_window.close()
-        self.close()
 
     def enable_collect_button(self):
         # Enable the button when the timer times out
         self.collect.setEnabled(True)
-        self.timer.stop()
+        self.timer_open_collect.stop()
         
     def show_info_screen(self):
         self.info_window.show()
@@ -224,7 +232,7 @@ class HomeWindow(QMainWindow):
     
     def start_timer(self):
         time.sleep(3)
-        self.timer.start(16)  # Update every 33 milliseconds (approximately 30 fps)
+        self.timer.start(33)  # Update every 33 milliseconds (approximately 30 fps)
 
     def update_button_by_enzim(self):
         value = GPIO.input(cf.GPIO_ENZIM)
@@ -261,6 +269,15 @@ class HomeWindow(QMainWindow):
         self.update_status_machine()
         if self.curr_status_machine == cf.STATE_MACHINE:
             self.reset_ui_and_interlock()
+
+    def FPS(self, interval = 1):
+        self._end_time = time.time()
+        if self._end_time - self._start_time > 1.0:
+            print(f"AVG FPS in {interval}s: {self._FPS}")
+            self._FPS = 0
+            self._start_time = self._end_time
+
+        self._FPS += 1
             
     def update_logic(self):
         self.update_status_machine()
@@ -282,41 +299,64 @@ class HomeWindow(QMainWindow):
         
         
     def update(self):
-        self.update_logic()
-        try: 
-            size = self.camera_label.size()
-            size_list = [size.width(), size.height()]
-            ret, frame = self.camera.read()
-            if ret:
-                output_frame, _, is_wrong = self._logic.update(frame, size_list, False, self.simulate_yn)
-                if (self.curr_status_machine != cf.STATE_MACHINE 
-                    and (self.curr_value_enzim == cf.STATE_ENZYME or self.simulate_yn)
-                    and is_wrong and self.count_sound == 0):
-                        
-                    self.count_sound += 1
-                    output_frame = draw_area_done(output_frame, is_wrong)
-                    self.is_done_detect = True
-                    self.frame_detect_done = output_frame
-                    self.handle_output(output_frame, is_wrong, mode="ON")
-                
-                if self.frame_detect_done is not None:
-                    self.show_image(self.frame_detect_done)
-                else:
-                    self.show_image(output_frame)
-                    
-                self.reset_program()
-                self.flash_window.close()
-                self.gpio_handler.initialize_ready_output()
-                
-            else:
-                self.camera_is_disconnect = True
-                self.show_image(cv2.imread(c.CAMERA_DISCONNECT_PATH))
+        # print("check_show_home: ", cons.check_show_home)
+        if not self.is_show_collect:
+            self.update_logic()
+            try: 
 
-                self._reconnect_camera()
-                
-        except Exception as e:
-            self.logger.error(f"Exception durring update frame: {e}", exc_info=True)
-    
+                size = self.camera_label.size()
+                size_list = [size.width(), size.height()]
+                ret, frame = self.camera.read()
+                print("warm_up: ", self.warm_up)
+                if ret:
+                    output_frame, _, is_wrong = self._logic.update(frame, size_list, False, self.simulate_yn)
+                    if (self.curr_status_machine != cf.STATE_MACHINE 
+                        and (self.curr_value_enzim == cf.STATE_ENZYME or self.simulate_yn)
+                        and is_wrong and self.count_sound == 0):
+                        
+                        self.warm_up += 1
+                        if self.warm_up == cf.NO_WARM_UP:
+                            self.count_sound += 1
+                            output_frame = draw_area_done(output_frame, is_wrong)
+                            self.is_done_detect = True
+                            self.frame_detect_done = output_frame
+                            self.handle_output(output_frame, is_wrong, mode="ON")
+                            self.warm_up = 0
+
+                    else:
+                        self.warm_up = 0
+
+                    
+                    if self.frame_detect_done is not None:
+                        self.show_image(self.frame_detect_done)
+                    else:
+                        self.show_image(output_frame)
+                        
+                    self.reset_program()
+                    self.flash_window.close()
+                    self.gpio_handler.initialize_ready_output()
+                    
+                else:
+                    self.camera_is_disconnect = True
+                    self.show_image(cv2.imread(c.CAMERA_DISCONNECT_PATH))
+
+                    self._reconnect_camera()
+
+
+                self.FPS()
+                    
+            except Exception as e:
+                # self.logger.error(f"Exception durring update frame: {e}", exc_info=True)
+                pass
+        elif cons.check_show_home:
+            self.flash_window.show()
+            self.flash_window.raise_()
+            self.init_camera()
+            self.start_timer()
+            self.is_show_collect = False
+            cons.check_show_home = False
+
+
     def _reconnect_camera(self):
         self.logger.warning("Failed to read from the camera. Trying to reconnect...")
         self.camera.release()
@@ -370,4 +410,3 @@ class HomeWindow(QMainWindow):
         print(event)
         self.reset_ui_and_interlock()
         print("Touch Event")
-    
