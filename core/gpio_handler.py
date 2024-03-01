@@ -45,10 +45,17 @@ class GPIOHandler:
         if pass_yn:
             for i in range(cf.TIMES_OUTPUT):
                 time_now = datetime.now()
-                GPIO.output(cf.GPIO_SOUND, cf.STATE_BUZER)
-                time.sleep(0.2)
-                GPIO.output(cf.GPIO_SOUND, not cf.STATE_BUZER)
-                time.sleep(0.1)
+                
+                if not cf.STATE_BUZER:
+                    GPIO.output(cf.GPIO_SOUND, not cf.STATE_BUZER)
+                    time.sleep(0.2)
+                    GPIO.output(cf.GPIO_SOUND, cf.STATE_BUZER)
+                    time.sleep(0.1)
+                else:
+                    GPIO.output(cf.GPIO_SOUND, cf.STATE_BUZER)
+                    time.sleep(0.2)
+                    GPIO.output(cf.GPIO_SOUND, not cf.STATE_BUZER)
+                    time.sleep(0.1)
       
     # mode 'ON' =  GPIO.LOW
     

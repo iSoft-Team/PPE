@@ -39,6 +39,10 @@ class HomeWindow(QMainWindow):
         self.frame_detect_done = None
         self.count_sound = 0
         self.is_show_collect = False
+        self.warm_up = 0
+        self._start_time = time.time()
+        self._end_time = time.time()
+        self._FPS = 0
         
         self.timer_open_collect = QTimer(self)
 
@@ -265,6 +269,15 @@ class HomeWindow(QMainWindow):
         self.update_status_machine()
         if self.curr_status_machine == cf.STATE_MACHINE:
             self.reset_ui_and_interlock()
+
+    def FPS(self, interval = 1):
+        self._end_time = time.time()
+        if self._end_time - self._start_time > 1.0:
+            print(f"AVG FPS in {interval}s: {self._FPS}")
+            self._FPS = 0
+            self._start_time = self._end_time
+
+        self._FPS += 1
             
     def update_logic(self):
         self.update_status_machine()
@@ -290,20 +303,29 @@ class HomeWindow(QMainWindow):
         if not self.is_show_collect:
             self.update_logic()
             try: 
+
                 size = self.camera_label.size()
                 size_list = [size.width(), size.height()]
                 ret, frame = self.camera.read()
+                print("warm_up: ", self.warm_up)
                 if ret:
                     output_frame, _, is_wrong = self._logic.update(frame, size_list, False, self.simulate_yn)
                     if (self.curr_status_machine != cf.STATE_MACHINE 
                         and (self.curr_value_enzim == cf.STATE_ENZYME or self.simulate_yn)
                         and is_wrong and self.count_sound == 0):
-                            
-                        self.count_sound += 1
-                        output_frame = draw_area_done(output_frame, is_wrong)
-                        self.is_done_detect = True
-                        self.frame_detect_done = output_frame
-                        self.handle_output(output_frame, is_wrong, mode="ON")
+                        
+                        self.warm_up += 1
+                        if self.warm_up == cf.NO_WARM_UP:
+                            self.count_sound += 1
+                            output_frame = draw_area_done(output_frame, is_wrong)
+                            self.is_done_detect = True
+                            self.frame_detect_done = output_frame
+                            self.handle_output(output_frame, is_wrong, mode="ON")
+                            self.warm_up = 0
+
+                    else:
+                        self.warm_up = 0
+
                     
                     if self.frame_detect_done is not None:
                         self.show_image(self.frame_detect_done)
@@ -319,6 +341,9 @@ class HomeWindow(QMainWindow):
                     self.show_image(cv2.imread(c.CAMERA_DISCONNECT_PATH))
 
                     self._reconnect_camera()
+
+
+                self.FPS()
                     
             except Exception as e:
                 # self.logger.error(f"Exception durring update frame: {e}", exc_info=True)
