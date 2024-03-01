@@ -22,7 +22,7 @@ class ProjectConfig(BaseSettings):
     GPIO_ERROR: int = 35
      
     GPIO_ENZIM: int = 16
-    GPIO_MACHINE_RUN: int = 18
+    GPIO_MACHINE_RUN: int = 24 ## 18
     GPIO_OPEN_DOOR: int = 22
     
     TRANSPARENT_SCORE = 0.3
