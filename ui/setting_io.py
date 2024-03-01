@@ -201,9 +201,9 @@ class SettingWindow(QMainWindow):
             self.curr_is_wrong_open_door = value
 
     def update_logic(self):
-        # self.update_button_by_enzim()
-        # self.update_status_machine()
-        # self.update_status_error_door()
+        self.update_button_by_enzim()
+        self.update_status_machine()
+        self.update_status_error_door()
         self.update_button_styles()
         
     def close_setting(self):

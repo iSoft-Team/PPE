@@ -229,7 +229,7 @@ class CollectWindow(QMainWindow):
                     # Introduce a short delay before retrying
                     time.sleep(5)
                     # Try to connect to the camera again
-                    self.camera = cv2.VideoCapture(0)
+                    self.camera = VideoCaptureWrapper(0)
                     self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
                     self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
                 

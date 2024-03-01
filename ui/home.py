@@ -216,13 +216,13 @@ class HomeWindow(QMainWindow):
         enzim_style = c.ENZIN_LABEL_NO_ENZIM_PATH if self.gpio_handler.enzim_yn == cf.STATE_ENZYME else c.ENZIN_LABEL_ENZIM_PATH
         self.enzin_label.setStyleSheet(enzim_style)
 
-        if self.simulate_yn or self.gpio_handler.enzim_yn == cf.STATE_ENZYME:
+        if self.simulate_yn or (self.gpio_handler.enzim_yn == cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE):
             self.simulate_btn.setStyleSheet(c.SIMULATE_PATH)
         else:
             self.simulate_btn.setStyleSheet(c.DISABLE_SIMULATE_PATH)
 
     def on_simulate_btn_click(self):
-        if self.gpio_handler.enzim_yn != cf.STATE_ENZYME:
+        if self.gpio_handler.enzim_yn != cf.STATE_ENZYME or self.curr_status_machine == cf.STATE_MACHINE:
             self.simulate_yn = not self.simulate_yn
             
         if self.frame_detect_done is not None: 
@@ -252,6 +252,14 @@ class HomeWindow(QMainWindow):
             print(f"curr_status_machine: {value}")
             self.curr_status_machine = value
             
+            if self.curr_value_enzim == cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
+                self.simulate_yn = True
+            else:
+                self.simulate_yn = False
+
+            if self.curr_status_machine == cf.STATE_MACHINE:
+                self.reset_ui_and_interlock()
+
     def update_status_error_door(self):
         value = GPIO.input(cf.GPIO_OPEN_DOOR)
         if value != self.curr_is_wrong_open_door:
@@ -267,8 +275,7 @@ class HomeWindow(QMainWindow):
             
     def reset_program(self):
         self.update_status_machine()
-        if self.curr_status_machine == cf.STATE_MACHINE:
-            self.reset_ui_and_interlock()
+
 
     def FPS(self, interval = 1):
         self._end_time = time.time()
@@ -307,32 +314,30 @@ class HomeWindow(QMainWindow):
                 size = self.camera_label.size()
                 size_list = [size.width(), size.height()]
                 ret, frame = self.camera.read()
-                print("warm_up: ", self.warm_up)
+                # print("warm_up: ", self.warm_up)
                 if ret:
-                    output_frame, _, is_wrong = self._logic.update(frame, size_list, False, self.simulate_yn)
-                    if (self.curr_status_machine != cf.STATE_MACHINE 
+                    output_frame, _, is_ppe = self._logic.update(frame, size_list, False, self.simulate_yn)
+                    if ((self.curr_status_machine != cf.STATE_MACHINE or self.simulate_yn)
                         and (self.curr_value_enzim == cf.STATE_ENZYME or self.simulate_yn)
-                        and is_wrong and self.count_sound == 0):
+                        and is_ppe and self.count_sound == 0):
                         
                         self.warm_up += 1
                         if self.warm_up == cf.NO_WARM_UP:
                             self.count_sound += 1
-                            output_frame = draw_area_done(output_frame, is_wrong)
+                            output_frame = draw_area_done(output_frame, is_ppe)
                             self.is_done_detect = True
                             self.frame_detect_done = output_frame
-                            self.handle_output(output_frame, is_wrong, mode="ON")
+                            self.handle_output(output_frame, is_ppe, mode="ON")
                             self.warm_up = 0
-
                     else:
                         self.warm_up = 0
 
-                    
                     if self.frame_detect_done is not None:
                         self.show_image(self.frame_detect_done)
                     else:
                         self.show_image(output_frame)
                         
-                    self.reset_program()
+                    # self.reset_program()
                     self.flash_window.close()
                     self.gpio_handler.initialize_ready_output()
                     
@@ -361,7 +366,7 @@ class HomeWindow(QMainWindow):
         self.logger.warning("Failed to read from the camera. Trying to reconnect...")
         self.camera.release()
         time.sleep(1)
-        self.camera = cv2.VideoCapture(0)
+        self.camera = VideoCaptureWrapper(0)
         self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
     
@@ -372,12 +377,12 @@ class HomeWindow(QMainWindow):
 
         self.camera_label.setPixmap(QPixmap.fromImage(q_image))
     
-    def handle_output(self, output_frame=None, is_wrong=None, mode=None):
+    def handle_output(self, output_frame=None, is_ppe=None, mode=None):
         self.gpio_handler.output_sound(pass_yn=(True if mode == 'ON' else False))
         self.gpio_handler.output_pass(mode)
         if output_frame is not None:
-            img_path = save_image(image=output_frame, result=is_wrong, img_size=cf.IMAGE_SIZE)
-            self.logger.info(f"Handle classify successful! result: {is_wrong} path: {img_path}")
+            img_path = save_image(image=output_frame, result=is_ppe, img_size=cf.IMAGE_SIZE)
+            self.logger.info(f"Handle classify successful! result: {is_ppe} path: {img_path}")
 
     def closeEvent(self, event):
         # Stop the camera when the application is closed
