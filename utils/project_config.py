@@ -38,8 +38,8 @@ class ProjectConfig(BaseSettings):
     IMAGE_SIZE = (351, 224)
     
     STATE_INTERLOCK = 0 # Interlock at block -> state = 0, the oposite is None -> state = 1
-    STATE_MACHINE = 0 # Machine running 
-    STATE_ENZYME = 1 # Enzyme on
+    STATE_MACHINE = 1 # Machine running 
+    STATE_ENZYME = 0 # Enzyme on
     STATE_DOOR = 1 # Close
     
     STATE_BUZER = 0 # 0 is on, 1 is off
