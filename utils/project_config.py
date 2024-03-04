@@ -47,7 +47,7 @@ class ProjectConfig(BaseSettings):
     STATE_READY = 1 # system ready
     
     STATE_DEFAULT = 0
-    NO_WARM_UP = 7
+    NO_WARM_UP = 3
 
 class Contants:
     def __init__(self):

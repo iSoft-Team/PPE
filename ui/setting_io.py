@@ -165,10 +165,10 @@ class SettingWindow(QMainWindow):
         self.interlock_btn = QPushButton("", widget)
         self.system_status_btn = QPushButton("", widget)
 
-        self.interlock_btn.setFixedHeight(150)
-        self.interlock_btn.setFixedWidth(180)
+        self.interlock_btn.setFixedHeight(163)
+        self.interlock_btn.setFixedWidth(240)
 
-        self.system_status_btn.setFixedHeight(160)
+        self.system_status_btn.setFixedHeight(165)
         self.system_status_btn.setFixedWidth(150)
 
         layout = QHBoxLayout(widget)
