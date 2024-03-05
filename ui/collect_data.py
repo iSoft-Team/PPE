@@ -27,8 +27,7 @@ class CollectWindow(QMainWindow):
     
     def __init__(self, start_yn=True):
         super().__init__()
-
-
+        
         self._logic = logic
         self.logger = CustomLoggerConfig.configure_logger()
         self.detect_yn = False
@@ -37,6 +36,10 @@ class CollectWindow(QMainWindow):
         self.sound_yn = False
         self.frame_crop = None
         self.is_show_setting = False
+
+        self.flash_window = FlashWindow()
+        self.flash_window.show()
+        self.flash_window.raise_()
 
         # Create a container widget to hold camera and button
         container_widget = QWidget(self)
@@ -149,6 +152,7 @@ class CollectWindow(QMainWindow):
         self.home_btn.setEnabled(False)
         # Start the timer to enable the button after 5000 milliseconds (5 seconds)
         self.timer.start(5000)
+
         self.camera.release()
         self.timer.stop()
 
@@ -221,6 +225,9 @@ class CollectWindow(QMainWindow):
                     output_frame, frame_crop, is_wrong = self._logic.update(frame, size_list, self.detect_yn, True)
                     self.frame_crop = frame_crop.copy()
                     self.show_image(output_frame)
+
+                    self.flash_window.close()
+
                         
                 else:
                     print('Failed to read from the camera. Trying to reconnect...')
