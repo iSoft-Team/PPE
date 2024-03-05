@@ -166,12 +166,18 @@ class CollectWindow(QMainWindow):
         self.timer_show_setting.stop()
 
     def pass_action(self):
-        img_path = os.path.join(cf.COLLECT_PATH, 'ok', f"{time.time()}_pass.png")
+        ok_path = os.path.join(cf.COLLECT_PATH, 'ok')
+        if not os.path.exists(ok_path):
+            os.makedirs(ok_path)
+        img_path = os.path.join(ok_path, f"{time.time()}_pass.png")
         cv2.imwrite(img_path, self.frame_crop)
         self.update_simulate_button_text()
 
     def fail_action(self):
-        img_path = os.path.join(cf.COLLECT_PATH, 'ng', f"{time.time()}_fail.png")
+        fail_path = os.path.join(cf.COLLECT_PATH, 'ng')
+        if not os.path.exists(fail_path):
+            os.makedirs(fail_path)
+        img_path = os.path.join(fail_path, f"{time.time()}_fail.png")
         cv2.imwrite(img_path, self.frame_crop)
         self.update_simulate_button_text()
 
