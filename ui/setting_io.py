@@ -134,7 +134,6 @@ class SettingWindow(QMainWindow):
         spare1 = c.SPARE1_ON_PATH if self.curr_spare_1 == cf.STATE_SPEARE1 else c.SPARE1_OFF_PATH
         spare2 = c.SPARE2_ON_PATH if self.curr_spare_2 == cf.STATE_SPEARE2 else c.SPARE2_OFF_PATH
         spare3 = c.SPARE3_ON_PATH if self.curr_spare_3 == cf.STATE_SPEARE3 else c.SPARE3_OFF_PATH
-
         spare4 = c.SPARE4_ON_PATH if self.curr_spare_4 == cf.STATE_SPEARE4 else c.SPARE4_OFF_PATH
         spare5 = c.SPARE5_ON_PATH if self.curr_spare_5 == cf.STATE_SPEARE5 else c.SPARE5_OFF_PATH
 
@@ -155,28 +154,28 @@ class SettingWindow(QMainWindow):
         self.enzyme_btn = QPushButton("", widget)
         self.machine_run_btn = QPushButton("", widget)
         self.door_status_btn = QPushButton("", widget)
-        self.spare_1_btn = QPushButton("SPARE 1", widget)
-        self.spare_2_btn = QPushButton("SPARE 2", widget)
-        self.spare_3_btn = QPushButton("SPARE 3", widget)
+        self.spare_1_btn = QPushButton("", widget)
+        self.spare_2_btn = QPushButton("", widget)
+        self.spare_3_btn = QPushButton("", widget)
 
         self.enzyme_btn.setFixedHeight(150)
         self.enzyme_btn.setFixedWidth(180)
 
         self.machine_run_btn.setFixedHeight(150)
-        self.machine_run_btn.setFixedWidth(200)
+        self.machine_run_btn.setFixedWidth(150)
 
         self.door_status_btn.setFixedHeight(150)
-        self.door_status_btn.setFixedWidth(148)
+        self.door_status_btn.setFixedWidth(150)
 
 
-        self.spare_1_btn.setFixedHeight(150)
-        self.spare_1_btn.setFixedWidth(180)
+        self.spare_1_btn.setFixedHeight(165)
+        self.spare_1_btn.setFixedWidth(150)
 
-        self.spare_2_btn.setFixedHeight(150)
-        self.spare_2_btn.setFixedWidth(180)
+        self.spare_2_btn.setFixedHeight(165)
+        self.spare_2_btn.setFixedWidth(150)
 
-        self.spare_3_btn.setFixedHeight(150)
-        self.spare_3_btn.setFixedWidth(180)
+        self.spare_3_btn.setFixedHeight(165)
+        self.spare_3_btn.setFixedWidth(150)
 
         layout_button = QVBoxLayout(widget)
         layout_group_button_top = QHBoxLayout()
@@ -213,8 +212,8 @@ class SettingWindow(QMainWindow):
     def create_right_buttons(self, widget):
         self.interlock_btn = QPushButton("", widget)
         self.system_status_btn = QPushButton("", widget)
-        self.spare_4_btn = QPushButton("SPARE 4", widget)
-        self.spare_5_btn = QPushButton("SPARE 5", widget)
+        self.spare_4_btn = QPushButton("", widget)
+        self.spare_5_btn = QPushButton("", widget)
         
         self.spare_4_btn.setFixedHeight(165)
         self.spare_4_btn.setFixedWidth(150)
@@ -222,8 +221,8 @@ class SettingWindow(QMainWindow):
         self.spare_5_btn.setFixedHeight(165)
         self.spare_5_btn.setFixedWidth(150)
 
-        self.interlock_btn.setFixedHeight(163)
-        self.interlock_btn.setFixedWidth(240)
+        self.interlock_btn.setFixedHeight(165)
+        self.interlock_btn.setFixedWidth(150)
 
         self.system_status_btn.setFixedHeight(165)
         self.system_status_btn.setFixedWidth(150)
