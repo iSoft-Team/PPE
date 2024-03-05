@@ -171,7 +171,7 @@ class SettingWindow(QMainWindow):
         self.enzyme_btn.setFixedWidth(180)
 
         self.machine_run_btn.setFixedHeight(150)
-        self.machine_run_btn.setFixedWidth(160)
+        self.machine_run_btn.setFixedWidth(195)
 
         self.door_status_btn.setFixedHeight(150)
         self.door_status_btn.setFixedWidth(150)
