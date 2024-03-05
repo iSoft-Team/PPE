@@ -49,6 +49,7 @@ class ProjectConfig(BaseSettings):
     STATE_DOOR = 1 # Close
     
     STATE_BUZER = 0 # 0 is on, 1 is off
+                    # 0 is off
     
     STATE_READY = 1 # system ready
 

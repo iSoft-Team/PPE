@@ -31,6 +31,8 @@ class Constant(BaseSettings):
     INTERLOCK_OFF_PATH: str = generate_style(icon_path("interlock_off.png"))
     SYSTEM_READY_PATH: str = generate_style(icon_path("ready.png"))
     SYSTEM_NOT_READY_PATH: str = generate_style(icon_path("not_ready.png"))
+    BUZER_ON_PATH: str = generate_style(icon_path("buzer_on.png"))
+    BUZER_OFF_PATH: str = generate_style(icon_path("buzer_off.png"))
     BUTTON_BG_PATH: str = generate_style(icon_path("Rectangle 208.png"))
     COLLECT_DATA: str = generate_style(icon_path("collect_data.png"))
     DETECT_PATH: str = generate_style(icon_path("detect-program.png"))
