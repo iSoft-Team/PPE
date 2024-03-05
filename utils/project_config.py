@@ -16,10 +16,16 @@ class ProjectConfig(BaseSettings):
     WIDTH: int = 1280
     HEIGHT: int = 720
     
+    GPIO_SPARE_1: int = 18
+    GPIO_SPARE_2: int = 26
+    GPIO_SPARE_3: int = 32
+    GPIO_SPARE_4: int = 29
+    GPIO_SPARE_5: int = 35
+
     GPIO_SOUND: int = 19
     GPIO_READY: int = 31
     GPIO_RESULT: int = 33
-    GPIO_ERROR: int = 35
+    # GPIO_ERROR: int = 35
      
     GPIO_ENZIM: int = 16
     GPIO_MACHINE_RUN: int = 24 ## 18
@@ -45,6 +51,13 @@ class ProjectConfig(BaseSettings):
     STATE_BUZER = 0 # 0 is on, 1 is off
     
     STATE_READY = 1 # system ready
+
+    STATE_SPEARE1 = 0
+    STATE_SPEARE2 = 0
+    STATE_SPEARE3 = 0
+    STATE_SPEARE4 = 0
+    STATE_SPEARE5 = 0
+
     
     STATE_DEFAULT = 0
     NO_WARM_UP = 3

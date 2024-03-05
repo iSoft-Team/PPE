@@ -27,15 +27,28 @@ class Constant(BaseSettings):
     DOOR_OPEN_PATH: str = generate_style(icon_path("door-open.png"))
     MACHINE_ON_PATH: str = generate_style(icon_path("machine-on.png"))
     MACHINE_OFF_PATH: str = generate_style(icon_path("machine-off.png"))
-    INTERLOCK_ON_PATH: str = generate_style(icon_path("machine-on-new.png"))
-    INTERLOCK_OFF_PATH: str = generate_style(icon_path("machine-off-new.png"))
-    SYSTEM_READY_PATH: str = generate_style(icon_path("ready-new.png"))
-    SYSTEM_NOT_READY_PATH: str = generate_style(icon_path("not-ready-new.png"))
+    INTERLOCK_ON_PATH: str = generate_style(icon_path("interlock_on.png"))
+    INTERLOCK_OFF_PATH: str = generate_style(icon_path("interlock_off.png"))
+    SYSTEM_READY_PATH: str = generate_style(icon_path("ready.png"))
+    SYSTEM_NOT_READY_PATH: str = generate_style(icon_path("not_ready.png"))
     BUTTON_BG_PATH: str = generate_style(icon_path("Rectangle 208.png"))
     COLLECT_DATA: str = generate_style(icon_path("collect_data.png"))
     DETECT_PATH: str = generate_style(icon_path("detect-program.png"))
     CAMERA_DISCONNECT_PATH: str = icon_path("camera_disconnected.jpg")
     SETTING_PATH: str = generate_style(icon_path("button-setting.png"))
+    SPARE1_ON_PATH: str = generate_style(icon_path("spare1_on.png"))
+    SPARE2_ON_PATH: str = generate_style(icon_path("spare2_on.png"))
+    SPARE3_ON_PATH: str = generate_style(icon_path("spare3_on.png"))
+    SPARE4_ON_PATH: str = generate_style(icon_path("spare4_on.png"))
+    SPARE5_ON_PATH: str = generate_style(icon_path("spare5_on.png"))
+    SPARE1_OFF_PATH: str = generate_style(icon_path("spare1_off.png"))
+    SPARE2_OFF_PATH: str = generate_style(icon_path("spare2_off.png"))
+    SPARE3_OFF_PATH: str = generate_style(icon_path("spare3_off.png"))
+    SPARE4_OFF_PATH: str = generate_style(icon_path("spare4_off.png"))
+    SPARE5_OFF_PATH: str = generate_style(icon_path("spare5_off.png"))
+
+
+
 
 constant = Constant()
     

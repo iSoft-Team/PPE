@@ -13,8 +13,8 @@ class GPIOHandler:
         self.update_button_style_yn = False
         self._is_first_time = True
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup([cf.GPIO_RESULT, cf.GPIO_READY], GPIO.OUT)
-        GPIO.setup([cf.GPIO_ENZIM, cf.GPIO_MACHINE_RUN, cf.GPIO_OPEN_DOOR], GPIO.IN)
+        GPIO.setup([cf.GPIO_RESULT, cf.GPIO_READY, cf.GPIO_SPARE_4, cf.GPIO_SPARE_5], GPIO.OUT)
+        GPIO.setup([cf.GPIO_ENZIM, cf.GPIO_MACHINE_RUN, cf.GPIO_OPEN_DOOR, cf.GPIO_SPARE_1, cf.GPIO_SPARE_2, cf.GPIO_SPARE_3], GPIO.IN)
         GPIO.setup(cf.GPIO_SOUND,GPIO.OUT,initial=GPIO.LOW)
         # lock filter when initialize
         GPIO.output(cf.GPIO_RESULT, cf.STATE_INTERLOCK) 

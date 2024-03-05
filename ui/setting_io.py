@@ -19,6 +19,12 @@ class SettingWindow(QMainWindow):
         self.curr_value_enzim = None
         self.curr_status_machine = None
         self.curr_is_wrong_open_door = None
+        self.curr_spare_1 = None
+        self.curr_spare_2 = None
+        self.curr_spare_3 = None
+
+        self.curr_spare_4 = True
+        self.curr_spare_5 = True
         self.curr_interlock_status = True
         self.curr_system_status = True
 
@@ -96,6 +102,8 @@ class SettingWindow(QMainWindow):
         self.update_button_styles()
         self.interlock_btn.clicked.connect(lambda: self.handle_button_click(self.interlock_btn))
         self.system_status_btn.clicked.connect(lambda: self.handle_button_click(self.system_status_btn))
+        self.spare_4_btn.clicked.connect(lambda: self.handle_button_click(self.spare_4_btn))
+        self.spare_5_btn.clicked.connect(lambda: self.handle_button_click(self.spare_5_btn))
 
 
     def start_timer(self):
@@ -123,18 +131,33 @@ class SettingWindow(QMainWindow):
         enzim_style = c.ENZIN_LABEL_NO_ENZIM_PATH if self.curr_value_enzim == cf.STATE_ENZYME else c.ENZIN_LABEL_ENZIM_PATH
         interlock_status = c.INTERLOCK_ON_PATH if self.curr_interlock_status == cf.STATE_INTERLOCK else c.INTERLOCK_OFF_PATH
         system_status = c.SYSTEM_NOT_READY_PATH if self.curr_system_status == cf.STATE_READY else c.SYSTEM_READY_PATH
+        spare1 = c.SPARE1_ON_PATH if self.curr_spare_1 == cf.STATE_SPEARE1 else c.SPARE1_OFF_PATH
+        spare2 = c.SPARE2_ON_PATH if self.curr_spare_2 == cf.STATE_SPEARE2 else c.SPARE2_OFF_PATH
+        spare3 = c.SPARE3_ON_PATH if self.curr_spare_3 == cf.STATE_SPEARE3 else c.SPARE3_OFF_PATH
+
+        spare4 = c.SPARE4_ON_PATH if self.curr_spare_4 == cf.STATE_SPEARE4 else c.SPARE4_OFF_PATH
+        spare5 = c.SPARE5_ON_PATH if self.curr_spare_5 == cf.STATE_SPEARE5 else c.SPARE5_OFF_PATH
+
 
         self.machine_run_btn.setStyleSheet(machine_status)
         self.door_status_btn.setStyleSheet(door_status)
         self.enzyme_btn.setStyleSheet(enzim_style)
         self.interlock_btn.setStyleSheet(interlock_status)
         self.system_status_btn.setStyleSheet(system_status)
+        self.spare_1_btn.setStyleSheet(spare1)
+        self.spare_2_btn.setStyleSheet(spare2)
+        self.spare_3_btn.setStyleSheet(spare3)
+        self.spare_4_btn.setStyleSheet(spare4)
+        self.spare_5_btn.setStyleSheet(spare5)
 
 
     def create_left_buttons(self, widget):
         self.enzyme_btn = QPushButton("", widget)
         self.machine_run_btn = QPushButton("", widget)
         self.door_status_btn = QPushButton("", widget)
+        self.spare_1_btn = QPushButton("SPARE 1", widget)
+        self.spare_2_btn = QPushButton("SPARE 2", widget)
+        self.spare_3_btn = QPushButton("SPARE 3", widget)
 
         self.enzyme_btn.setFixedHeight(150)
         self.enzyme_btn.setFixedWidth(180)
@@ -145,10 +168,28 @@ class SettingWindow(QMainWindow):
         self.door_status_btn.setFixedHeight(150)
         self.door_status_btn.setFixedWidth(148)
 
-        layout = QHBoxLayout(widget)
-        layout.addWidget(self.enzyme_btn)
-        layout.addWidget(self.machine_run_btn)
-        layout.addWidget(self.door_status_btn)
+
+        self.spare_1_btn.setFixedHeight(150)
+        self.spare_1_btn.setFixedWidth(180)
+
+        self.spare_2_btn.setFixedHeight(150)
+        self.spare_2_btn.setFixedWidth(180)
+
+        self.spare_3_btn.setFixedHeight(150)
+        self.spare_3_btn.setFixedWidth(180)
+
+        layout_button = QVBoxLayout(widget)
+        layout_group_button_top = QHBoxLayout()
+        layout_group_button_top.addWidget(self.enzyme_btn)
+        layout_group_button_top.addWidget(self.machine_run_btn)
+        layout_group_button_top.addWidget(self.door_status_btn)
+        layout_button.addLayout(layout_group_button_top)
+
+        layout_group_button_bot = QHBoxLayout()
+        layout_group_button_bot.addWidget(self.spare_1_btn)
+        layout_group_button_bot.addWidget(self.spare_2_btn)
+        layout_group_button_bot.addWidget(self.spare_3_btn)
+        layout_button.addLayout(layout_group_button_bot)
         
     def handle_button_click(self, button):
         if button == self.interlock_btn:
@@ -159,11 +200,27 @@ class SettingWindow(QMainWindow):
             self.curr_system_status = not self.curr_system_status
             GPIO.output(cf.GPIO_READY, self.curr_system_status)
 
+        elif button == self.spare_4_btn:
+            self.curr_spare_4 = not self.curr_spare_4
+            GPIO.output(cf.GPIO_SPARE_4, self.curr_spare_4)
+
+        elif button == self.spare_5_btn:
+            self.curr_spare_5 = not self.curr_spare_5
+            GPIO.output(cf.GPIO_SPARE_5, self.curr_spare_5)
+
         self.update_button_styles()
 
     def create_right_buttons(self, widget):
         self.interlock_btn = QPushButton("", widget)
         self.system_status_btn = QPushButton("", widget)
+        self.spare_4_btn = QPushButton("SPARE 4", widget)
+        self.spare_5_btn = QPushButton("SPARE 5", widget)
+        
+        self.spare_4_btn.setFixedHeight(165)
+        self.spare_4_btn.setFixedWidth(150)
+
+        self.spare_5_btn.setFixedHeight(165)
+        self.spare_5_btn.setFixedWidth(150)
 
         self.interlock_btn.setFixedHeight(163)
         self.interlock_btn.setFixedWidth(240)
@@ -171,16 +228,18 @@ class SettingWindow(QMainWindow):
         self.system_status_btn.setFixedHeight(165)
         self.system_status_btn.setFixedWidth(150)
 
-        layout = QHBoxLayout(widget)
-        layout.addWidget(self.interlock_btn)
-        layout.addWidget(self.system_status_btn)
+        layout_button = QVBoxLayout(widget)
 
+        layout_group_button_top = QHBoxLayout()
+        layout_group_button_top.addWidget(self.interlock_btn)
+        layout_group_button_top.addWidget(self.system_status_btn)
+        layout_button.addLayout(layout_group_button_top)
 
-        # self.interlock_label = QLabel("ON", widget)
-        # self.interlock_label.setFixedHeight(100)
-        # self.interlock_label.setFixedWidth(100)
+        layout_group_button_bot = QHBoxLayout()
+        layout_group_button_bot.addWidget(self.spare_4_btn)
+        layout_group_button_bot.addWidget(self.spare_5_btn)
+        layout_button.addLayout(layout_group_button_bot)
 
-        # layout.addWidget(self.interlock_label)
 
     def update_button_by_enzim(self):
         value = GPIO.input(cf.GPIO_ENZIM)
@@ -199,11 +258,33 @@ class SettingWindow(QMainWindow):
         if value != self.curr_is_wrong_open_door:
             print(f"curr_is_wrong_open_door: {value}")
             self.curr_is_wrong_open_door = value
+    
+                
+    def update_status_spare_1(self):
+        value = GPIO.input(cf.GPIO_SPARE_1)
+        if value != self.curr_spare_1:
+            print(f"curr_spare_1: {value}")
+            self.curr_spare_1 = value
+
+    def update_status_spare_2(self):
+        value = GPIO.input(cf.GPIO_SPARE_2)
+        if value != self.curr_spare_2:
+            print(f"curr_spare_2: {value}")
+            self.curr_spare_2 = value
+    
+    def update_status_spare_3(self):
+        value = GPIO.input(cf.GPIO_SPARE_3)
+        if value != self.curr_spare_3:
+            print(f"curr_spare_1: {value}")
+            self.curr_spare_3 = value
 
     def update_logic(self):
         self.update_button_by_enzim()
         self.update_status_machine()
         self.update_status_error_door()
+        self.update_status_spare_1()
+        self.update_status_spare_2()
+        self.update_status_spare_3()
         self.update_button_styles()
         
     def close_setting(self):
