@@ -2,7 +2,7 @@ import Jetson.GPIO as GPIO
 import time
 
 # Pin Definitions
-output_pin = [33,19,31]  # BCM pin 18, BOARD pin 12
+output_pin = [33,31, 37, 7, 11, 13, 15, 21, 23, 29, 16, 18, 22, 24, 26, 32, 36, 38, 12, 19]  # BCM pin 18, BOARD pin 12
 
 def main():
     # Pin Setup:
@@ -14,11 +14,11 @@ def main():
     curr_value = GPIO.LOW
     try:
         while True:
-            time.sleep(1)
+            time.sleep(0.5)
             # Toggle the output every second
             print("Outputting {} to pin {}".format(curr_value, output_pin))
             GPIO.output(output_pin, curr_value)
-            curr_value = GPIO.HIGH
+            curr_value = not curr_value
     finally:
         GPIO.cleanup()
 

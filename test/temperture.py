@@ -8,10 +8,12 @@ import os
 csv_file_path = 'public/logs/temperture/log_temperture.csv'
 
 # Create an empty DataFrame with the desired column names
-columns = ['Time', 'Uptime', 'CPU1', 'CPU2', 'CPU3', 'CPU4', 'CPU5', 'CPU6', 'RAM', 'SWAP', 'EMC', 'GPU',
-           'APE', 'NVDEC', 'NVENC', 'NVJPG', 'NVJPG1', 'SE', 'VIC', 'Fan pwmfan0', 'Temp CPU', 'Temp CV0',
-           'Temp CV1', 'Temp CV2', 'Temp GPU', 'Temp SOC0', 'Temp SOC1', 'Temp SOC2', 'Temp tj', 'Power tj',
-           'Power TOT', 'jetson_clocks', 'nvp model']
+columns = ['Time', 'Uptime', 'CPU1', 'CPU2', 'CPU3', 'CPU4', 'CPU5', 'CPU6', 'CPU7', 'CPU8', 'RAM', 'SWAP', 'EMC', 'GPU', 'APE', 'DLA0_CORE', 'DLA0_FALCON', 'DLA1_CORE', 'DLA1_FALCON', 'NVDEC', 'NVENC', 'NVJPG', 'NVJPG1', 'PVA0_CPU_AXI', 'PVA0_VPS', 'SE', 'VIC', 'Fan pwmfan0', 'Temp CPU', 'Temp CV0', 'Temp CV1', 'Temp CV2', 'Temp GPU', 'Temp SOC0', 'Temp SOC1', 'Temp SOC2', 'Temp tj', 'Power tj', 'Power TOT', 'jetson_clocks', 'nvp model']
+
+with jtop() as jetson:
+    columns = list(jetson.stats.keys())
+    print(jetson.stats)
+
 
 df = pd.DataFrame(columns=columns)
 
@@ -25,8 +27,8 @@ with jtop() as jetson:
         stats = jetson.stats
 
         # Convert time and uptime to string for DataFrame
-        stats['Time'] = stats['time'].strftime('%Y-%m-%d %H:%M:%S')
-        stats['Uptime'] = str(stats['uptime'])
+        stats['time'] = stats['time'].strftime('%Y-%m-%d %H:%M:%S')
+        stats['uptime'] = str(stats['uptime'])
 
         # Append data to the DataFrame
         df = pd.concat([df, pd.DataFrame([stats])])
