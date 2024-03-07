@@ -16,7 +16,7 @@ class ProjectConfig(BaseSettings):
     WIDTH: int = 1280
     HEIGHT: int = 720
     
-    GPIO_SPARE_1: int = 18
+    GPIO_SPARE_1: int = 24
     GPIO_SPARE_2: int = 26
     GPIO_SPARE_3: int = 32
     GPIO_SPARE_4: int = 29
