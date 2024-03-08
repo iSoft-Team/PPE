@@ -165,7 +165,7 @@ class HomeWindow(QMainWindow):
 
 
     def init_camera(self):
-        self.camera = VideoCaptureWrapper(0)
+        self.camera = cv2.VideoCapture(0)
         self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
         self.timer = QTimer(self)
@@ -246,6 +246,8 @@ class HomeWindow(QMainWindow):
             
             if self.curr_value_enzim == cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
                 self.simulate_yn = True
+                self.simulate_click = False
+                
                 self.gpio_handler.output_pass("OFF")
 
             else:
@@ -265,6 +267,8 @@ class HomeWindow(QMainWindow):
             
             if self.curr_value_enzim == cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
                 self.simulate_yn = True
+                self.simulate_click = False
+                
                 # self.gpio_handler.output_pass("OFF")
 
             else:
@@ -338,6 +342,7 @@ class HomeWindow(QMainWindow):
                 size = self.camera_label.size()
                 size_list = [size.width(), size.height()]
                 ret, frame = self.camera.read()
+                print(frame.shape)
                 # print("warm_up: ", self.warm_up)
                 if ret:
                     output_frame, _, is_ppe = self._logic.update(frame, size_list, False, self.simulate_yn)
@@ -352,8 +357,8 @@ class HomeWindow(QMainWindow):
                             output_frame = draw_area_done(output_frame, is_ppe)
                             self.is_done_detect = True
                             self.frame_detect_done = output_frame
-                            # if not self.simulate_click:
-                            self.handle_output(output_frame, is_ppe, mode="ON")
+                            if not self.simulate_click:
+                                self.handle_output(output_frame, is_ppe, mode="ON")
                             self.warm_up = 0
                     else:
                         self.warm_up = 0
@@ -377,7 +382,7 @@ class HomeWindow(QMainWindow):
                 self.FPS()
                     
             except Exception as e:
-                # self.logger.error(f"Exception durring update frame: {e}", exc_info=True)
+                self.logger.error(f"Exception durring update frame: {e}", exc_info=True)
                 pass
         elif cons.check_show_home:
             self.flash_window.show()
@@ -392,7 +397,7 @@ class HomeWindow(QMainWindow):
         self.logger.warning("Failed to read from the camera. Trying to reconnect...")
         self.camera.release()
         time.sleep(1)
-        self.camera = VideoCaptureWrapper(0)
+        self.camera =  cv2.VideoCapture(0)
         self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
     
