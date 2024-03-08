@@ -1,6 +1,30 @@
 import os
 from utils.project_config import project_config as cf
 import cv2 
+from jtop import jtop
+
+def get_jetson_info():
+    try:
+        with jtop() as jetson:
+            return jetson.stats
+    except Exception as e:
+        print(str(e))
+        return []
+
+def format_data(data):
+    formatted_data = ""
+    formatted_data += f"CPU Temp: {data['Temp CPU']}\n"
+    formatted_data += f"GPU Temp: {data['Temp GPU']}\n"
+    formatted_data += f"CPU Usage: {data['CPU1']}%\n"  # You can choose any CPU core for usage percentage
+    return formatted_data
+
+
+def draw_temp(frame, data):
+    # Display only the necessary information on the right side
+    frame = cv2.putText(frame, format_data(data), (700, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
+    return frame
+
+
 
 def get_path_log(log_path='tracks', sub_path=''):
     from datetime import datetime, time

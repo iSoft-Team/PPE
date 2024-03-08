@@ -17,7 +17,7 @@ class GPIOHandler:
         GPIO.setup([cf.GPIO_ENZIM, cf.GPIO_MACHINE_RUN, cf.GPIO_OPEN_DOOR, cf.GPIO_SPARE_1, cf.GPIO_SPARE_2, cf.GPIO_SPARE_3], GPIO.IN)
         GPIO.setup(cf.GPIO_SOUND,GPIO.OUT,initial=GPIO.LOW)
         # lock filter when initialize
-        GPIO.output(cf.GPIO_RESULT, cf.STATE_INTERLOCK) 
+        # GPIO.output(cf.GPIO_RESULT, cf.STATE_INTERLOCK) 
         
         # GPIO.output(cf.GPIO_SOUND, not cf.STATE_BUZER)
 
@@ -61,12 +61,14 @@ class GPIOHandler:
     
     def output_pass(self, mode="ON"):
             # Create a separate thread for the sound output
-        sound_thread = threading.Thread(target=self._output_pass_in_thread, args={mode})
-        sound_thread.start()
+        output_thread = threading.Thread(target=self._output_pass_in_thread, args={mode})
+        output_thread.start()
+        output_thread.join()
         
     def _output_pass_in_thread(self, mode='ON'):
+        print(mode)
+
         if mode == 'ON':
-            print(mode)
             GPIO.output(cf.GPIO_RESULT, not cf.STATE_INTERLOCK)
         else:
             GPIO.output(cf.GPIO_RESULT, cf.STATE_INTERLOCK)

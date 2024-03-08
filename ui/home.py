@@ -43,6 +43,8 @@ class HomeWindow(QMainWindow):
         self._start_time = time.time()
         self._end_time = time.time()
         self._FPS = 0
+        self.counter_reset = 0
+        self.simulate_click = False
         
         self.timer_open_collect = QTimer(self)
 
@@ -224,6 +226,7 @@ class HomeWindow(QMainWindow):
     def on_simulate_btn_click(self):
         if self.gpio_handler.enzim_yn != cf.STATE_ENZYME or self.curr_status_machine == cf.STATE_MACHINE:
             self.simulate_yn = not self.simulate_yn
+            self.simulate_click = not self.simulate_click
             
         if self.frame_detect_done is not None: 
             self.simulate_yn = True
@@ -243,8 +246,16 @@ class HomeWindow(QMainWindow):
             
             if self.curr_value_enzim == cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
                 self.simulate_yn = True
+                self.gpio_handler.output_pass("OFF")
+
             else:
                 self.simulate_yn = False
+                # self.gpio_handler.output_pass("ON")
+
+            if self.curr_value_enzim != cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
+                self.gpio_handler.output_pass("ON")
+
+
 
     def update_status_machine(self):
         value = GPIO.input(cf.GPIO_MACHINE_RUN)
@@ -254,24 +265,37 @@ class HomeWindow(QMainWindow):
             
             if self.curr_value_enzim == cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
                 self.simulate_yn = True
+                # self.gpio_handler.output_pass("OFF")
+
             else:
                 self.simulate_yn = False
+                # self.gpio_handler.output_pass("ON")
 
-            if self.curr_status_machine == cf.STATE_MACHINE:
+            if self.curr_status_machine == cf.STATE_MACHINE and self.curr_value_enzim == cf.STATE_ENZYME:
                 self.reset_ui_and_interlock()
+
+            if self.curr_value_enzim != cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
+                self.gpio_handler.output_pass("ON")
 
     def update_status_error_door(self):
         value = GPIO.input(cf.GPIO_OPEN_DOOR)
         if value != self.curr_is_wrong_open_door:
             print(f"curr_is_wrong_open_door: {value}")
-            if self.curr_is_wrong_open_door != cf.STATE_DOOR and value == cf.STATE_DOOR:
+            if self.curr_is_wrong_open_door != cf.STATE_DOOR and value == cf.STATE_DOOR and self.curr_value_enzim == cf.STATE_ENZYME:
                 self.reset_ui_and_interlock()
             self.curr_is_wrong_open_door = value
-         
+
+    def reset_ui(self):
+        self.frame_detect_done = None
+        self.count_sound = 0
+
+
     def reset_ui_and_interlock(self):
         self.frame_detect_done = None
-        self.handle_output(None, None, mode="OFF")
+        if self.counter_reset > 0:
+            self.handle_output(None, None, mode="OFF")
         self.count_sound = 0
+        self.counter_reset = 1
             
     def reset_program(self):
         self.update_status_machine()
@@ -324,9 +348,11 @@ class HomeWindow(QMainWindow):
                         self.warm_up += 1
                         if self.warm_up == cf.NO_WARM_UP:
                             self.count_sound += 1
+                            print(self.simulate_click)
                             output_frame = draw_area_done(output_frame, is_ppe)
                             self.is_done_detect = True
                             self.frame_detect_done = output_frame
+                            # if not self.simulate_click:
                             self.handle_output(output_frame, is_ppe, mode="ON")
                             self.warm_up = 0
                     else:
@@ -408,10 +434,10 @@ class HomeWindow(QMainWindow):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            self.reset_ui_and_interlock()
+            self.reset_ui()
             print("Left Mouse Click")
 
     def touchEvent(self, event):
         print(event)
-        self.reset_ui_and_interlock()
+        self.reset_ui()
         print("Touch Event")
