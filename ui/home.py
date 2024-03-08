@@ -165,7 +165,7 @@ class HomeWindow(QMainWindow):
 
 
     def init_camera(self):
-        self.camera = cv2.VideoCapture(0)
+        self.camera = VideoCaptureWrapper(0)
         self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
         self.timer = QTimer(self)
@@ -252,11 +252,12 @@ class HomeWindow(QMainWindow):
 
             else:
                 self.simulate_yn = False
-                # self.gpio_handler.output_pass("ON")
 
-            if self.curr_value_enzim != cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
+            if self.curr_value_enzim != cf.STATE_ENZYME: #  and self.curr_status_machine != cf.STATE_MACHINE:
                 self.gpio_handler.output_pass("ON")
-
+            else:
+                self.gpio_handler.output_pass("OFF")
+                
 
 
     def update_status_machine(self):
@@ -269,17 +270,17 @@ class HomeWindow(QMainWindow):
                 self.simulate_yn = True
                 self.simulate_click = False
                 
-                # self.gpio_handler.output_pass("OFF")
-
             else:
                 self.simulate_yn = False
-                # self.gpio_handler.output_pass("ON")
 
             if self.curr_status_machine == cf.STATE_MACHINE and self.curr_value_enzim == cf.STATE_ENZYME:
                 self.reset_ui_and_interlock()
 
-            if self.curr_value_enzim != cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
+            if self.curr_value_enzim != cf.STATE_ENZYME: # and self.curr_status_machine != cf.STATE_MACHINE:
                 self.gpio_handler.output_pass("ON")
+            else:
+                self.gpio_handler.output_pass("OFF")
+                
 
     def update_status_error_door(self):
         value = GPIO.input(cf.GPIO_OPEN_DOOR)
@@ -342,7 +343,6 @@ class HomeWindow(QMainWindow):
                 size = self.camera_label.size()
                 size_list = [size.width(), size.height()]
                 ret, frame = self.camera.read()
-                print(frame.shape)
                 # print("warm_up: ", self.warm_up)
                 if ret:
                     output_frame, _, is_ppe = self._logic.update(frame, size_list, False, self.simulate_yn)
@@ -397,7 +397,7 @@ class HomeWindow(QMainWindow):
         self.logger.warning("Failed to read from the camera. Trying to reconnect...")
         self.camera.release()
         time.sleep(1)
-        self.camera =  cv2.VideoCapture(0)
+        self.camera =  VideoCaptureWrapper(0)
         self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
     

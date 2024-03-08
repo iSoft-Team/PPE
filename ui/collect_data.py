@@ -12,7 +12,7 @@ from utils.project_config import cons
 import time
 import datetime
 import logging
-from utils.utils import save_image, draw_temp, get_jetson_info
+from utils.utils import save_image
 from utils.logging import CustomLoggerConfig
 import threading
 import os
@@ -38,7 +38,6 @@ class CollectWindow(QMainWindow):
         self.is_show_setting = False
         self.start_time = time.time()
         self.end_time = time.time()
-        self.data = get_jetson_info()
 
         self.flash_window = FlashWindow()
         self.flash_window.show()
@@ -223,14 +222,8 @@ class CollectWindow(QMainWindow):
         time.sleep(3)
         self.timer.start(33)  # Update every 33 milliseconds (approximately 30 fps)
 
-    def get_data_json_by_delay(self):
-        self.end_time = time.time()
-        if self.end_time - self.start_time >= 10:
-            self.data = get_jetson_info()
-            self.start_time = self.end_time
 
     def update(self):
-        # self.get_data_json_by_delay()
         if not self.is_show_setting:
             try: 
                 size = self.camera_label.size()
@@ -239,7 +232,6 @@ class CollectWindow(QMainWindow):
                 if ret:
                     output_frame, frame_crop, is_wrong = self._logic.update(frame, size_list, self.detect_yn, True)
                     self.frame_crop = frame_crop.copy()
-                    output_frame = draw_temp(output_frame, self.data)
                     self.show_image(output_frame)
                     
                     self.flash_window.close()
