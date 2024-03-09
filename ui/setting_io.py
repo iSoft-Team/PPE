@@ -37,11 +37,9 @@ class SettingWindow(QMainWindow):
         # Tạo hai side bar
         input_side = QWidget(self)
 
-        
-
         self.input_header = QLabel("INPUT", self)
         self.input_header.setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #2874A6, stop:1 #85C1E9); color: white; border: none")
-        self.input_header.setFixedWidth(1080)
+        self.input_header.setFixedHeight(100)
         self.input_header.setAlignment(Qt.AlignCenter)
         
         font = self.input_header.font()
@@ -52,25 +50,23 @@ class SettingWindow(QMainWindow):
 
         self.output_header = QLabel("OUTPUT", self)
         self.output_header.setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #17A589, stop:1 #A3E4D7); color: white; border: none")
-        self.output_header.setFixedWidth(1080)
+        self.output_header.setFixedHeight(100)
         self.output_header.setAlignment(Qt.AlignCenter)
 
         font = self.output_header.font()
         font.setPointSize(60)  # You can change the size as needed
         self.output_header.setFont(font)
 
-        input_side.setFixedWidth(1080)
         
         self.create_left_buttons(input_side)  # Thêm button vào bên trái
         self.create_right_buttons(output_side)  # Thêm button vào bên phải
-
         # Đặt các side bar và header vào layout ngang
         side_bar_layout = QVBoxLayout()
         side_bar_layout.addWidget(input_side)
         side_bar_layout.addWidget(output_side)
 
         header_layout = QHBoxLayout()
-        header_layout.addWidget(self.input_header, alignment=Qt.AlignCenter)
+        # header_layout.addWidget(self.input_header, alignment=Qt.AlignCenter)
         # header_layout.addWidget(self.output_header, alignment=Qt.AlignCenter)
 
         # Sử dụng QSplitter để chia đôi màn hình
@@ -87,6 +83,7 @@ class SettingWindow(QMainWindow):
         self.quit_btn.setStyleSheet(c.CLOSE_PATH)  # Bạn cần thêm stylesheet cho nút này nếu cần
         self.quit_btn.clicked.connect(self.close_setting)
         self.quit_btn.setFocusPolicy(Qt.NoFocus)
+        self.quit_btn.setFixedHeight(30)
 
         # Thêm nút quit vào layout của phần dưới
         bottom_layout = QHBoxLayout()
@@ -96,8 +93,8 @@ class SettingWindow(QMainWindow):
         # Thêm bottom_layout vào container_layout trước top_layout
         container_layout.addLayout(bottom_layout, 0)  # Đặt index là 0 để thêm vào đầu tiên
 
-        container_layout.addLayout(header_layout, 1)  # Thêm header vào layout chính
-        container_layout.addWidget(splitter, 6)  # Thêm QSplitter vào layout chính
+        # container_layout.addLayout(header_layout, 1)  # Thêm header vào layout chính
+        container_layout.addWidget(splitter)  # Thêm QSplitter vào layout chính
 
         self.setCentralWidget(container_widget)
 
@@ -179,7 +176,6 @@ class SettingWindow(QMainWindow):
         self.door_status_btn.setFixedHeight(150)
         self.door_status_btn.setFixedWidth(150)
 
-
         self.spare_1_btn.setFixedHeight(165)
         self.spare_1_btn.setFixedWidth(150)
 
@@ -190,40 +186,26 @@ class SettingWindow(QMainWindow):
         self.spare_3_btn.setFixedWidth(150)
 
         layout_button = QVBoxLayout(widget)
+        
+        layout_group_header = QVBoxLayout()
+        layout_group_header.addWidget(self.input_header)
+        
+        layout_button.addLayout(layout_group_header, stretch=1)
         layout_group_button_top = QHBoxLayout()
+        # layout_button.addWidget(self.input_header, alignment=Qt.AlignCenter)  # 20%
+        
         layout_group_button_top.addWidget(self.enzyme_btn)
         layout_group_button_top.addWidget(self.machine_run_btn)
         layout_group_button_top.addWidget(self.door_status_btn)
-        layout_button.addLayout(layout_group_button_top)
+        
+        layout_button.addLayout(layout_group_button_top, stretch=4)  # 40%
 
         layout_group_button_bot = QHBoxLayout()
         layout_group_button_bot.addWidget(self.spare_1_btn)
         layout_group_button_bot.addWidget(self.spare_2_btn)
         layout_group_button_bot.addWidget(self.spare_3_btn)
-        layout_button.addLayout(layout_group_button_bot)
-        
-    def handle_button_click(self, button):
-        if button == self.interlock_btn:
-            self.curr_interlock_status = not self.curr_interlock_status
-            GPIO.output(cf.GPIO_RESULT, self.curr_interlock_status)
+        layout_button.addLayout(layout_group_button_bot, stretch=4)
 
-        elif button == self.system_status_btn:
-            self.curr_system_status = not self.curr_system_status
-            GPIO.output(cf.GPIO_READY, self.curr_system_status)
-
-        elif button == self.buzer_btn:
-            self.curr_buzer_status = not self.curr_buzer_status
-            GPIO.output(cf.GPIO_SOUND, self.curr_buzer_status)
-        
-        elif button == self.spare_4_btn:
-            self.curr_spare_4 = not self.curr_spare_4
-            GPIO.output(cf.GPIO_SPARE_4, self.curr_spare_4)
-
-        elif button == self.spare_5_btn:
-            self.curr_spare_5 = not self.curr_spare_5
-            GPIO.output(cf.GPIO_SPARE_5, self.curr_spare_5)
-
-        self.update_button_styles()
 
     def create_right_buttons(self, widget):
         self.interlock_btn = QPushButton("", widget)
@@ -249,18 +231,44 @@ class SettingWindow(QMainWindow):
         self.buzer_btn.setFixedWidth(150)
 
         layout_button = QVBoxLayout(widget)
-        layout_button.addWidget(self.output_header, alignment=Qt.AlignCenter, stretch=1)
+        layout_group_header = QVBoxLayout()
+        layout_group_header.addWidget(self.output_header)
+        layout_button.addLayout(layout_group_header, stretch=1)
+        
+        # layout_button.addWidget(self.output_header, alignment=Qt.AlignCenter)
         layout_group_button_top = QHBoxLayout()
         layout_group_button_top.addWidget(self.interlock_btn)
         layout_group_button_top.addWidget(self.system_status_btn)
         layout_group_button_top.addWidget(self.buzer_btn)
-        layout_button.addLayout(layout_group_button_top, stretch=2)
+        layout_button.addLayout(layout_group_button_top, stretch=4)
 
         layout_group_button_bot = QHBoxLayout()
-        
         layout_group_button_bot.addWidget(self.spare_4_btn)
         layout_group_button_bot.addWidget(self.spare_5_btn)
-        layout_button.addLayout(layout_group_button_bot, stretch=2)
+        layout_button.addLayout(layout_group_button_bot, stretch=4)
+        
+    def handle_button_click(self, button):
+        if button == self.interlock_btn:
+            self.curr_interlock_status = not self.curr_interlock_status
+            GPIO.output(cf.GPIO_RESULT, self.curr_interlock_status)
+
+        elif button == self.system_status_btn:
+            self.curr_system_status = not self.curr_system_status
+            GPIO.output(cf.GPIO_READY, self.curr_system_status)
+
+        elif button == self.buzer_btn:
+            self.curr_buzer_status = not self.curr_buzer_status
+            GPIO.output(cf.GPIO_SOUND, self.curr_buzer_status)
+        
+        elif button == self.spare_4_btn:
+            self.curr_spare_4 = not self.curr_spare_4
+            GPIO.output(cf.GPIO_SPARE_4, self.curr_spare_4)
+
+        elif button == self.spare_5_btn:
+            self.curr_spare_5 = not self.curr_spare_5
+            GPIO.output(cf.GPIO_SPARE_5, self.curr_spare_5)
+
+        self.update_button_styles()
 
 
     def update_button_by_enzim(self):
