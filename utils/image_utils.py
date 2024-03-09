@@ -3,29 +3,30 @@ import numpy as np
 from utils.project_config import project_config
 
 def center_crop(img, dim):
-	"""Returns center cropped image
-	Args:
-	img: image to be center cropped
-	dim: dimensions (height, width) to be cropped
+    """Returns center cropped image
+        Args:
+        img: image to be center cropped
+        dim: dimensions (height, width) to be cropped
 	"""
-	width, height = img.shape[1], img.shape[0]
+
+    width, height = img.shape[1], img.shape[0]
 
 	# process crop width and height for max available dimension
-	crop_width = dim[0] if dim[0]<img.shape[1] else img.shape[1]
-	crop_height = dim[1] if dim[1]<img.shape[0] else img.shape[0] 
-	mid_x, mid_y = int(width/2), int(height/2)
-	cw2, ch2 = int(crop_width/2), int(crop_height/2) 
-	crop_img = img[mid_y-ch2:mid_y+ch2, mid_x-cw2:mid_x+cw2]
-    
-	return crop_img
+    crop_width = dim[0] if dim[0]<img.shape[1] else img.shape[1]
+    crop_height = dim[1] if dim[1]<img.shape[0] else img.shape[0] 
+    mid_x, mid_y = int(width/2), int(height/2)
+    cw2, ch2 = int(crop_width/2), int(crop_height/2) 
+    crop_img = img[mid_y-ch2:mid_y+ch2, mid_x-cw2:mid_x+cw2]
+    return crop_img
 
-def resize_image(image, target_width):
-    original_height, original_width = image.shape[:2]
-    scale_factor = target_width / original_width
-    new_height = int(original_height * scale_factor)
-    resized_image = cv2.resize(image, (target_width, new_height))
+def resize_image(image, target_height):
+	original_height, original_width = image.shape[:2]
 
-    return resized_image
+	scale_factor = target_height / original_height
+
+	resized_image = cv2.resize(image, (int(original_width * scale_factor), target_height))
+
+	return resized_image
 
 
 def center_crop_width(img, crop_width):

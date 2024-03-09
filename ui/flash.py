@@ -50,9 +50,9 @@ class FlashWindow(QMainWindow):
         self.start_loading_screen()
 
     def init_main_window(self):
-        width = 1920
+        width = 1080
         aspect_ratio = 9 / 16  # 9:16
-        height = int(width * aspect_ratio)
+        height = int(width / aspect_ratio)
         self.setGeometry(0, 0, width, height)
         self.setStyleSheet(c.LOADING_BACKGROUND_PATH)
         self.setWindowFlags(Qt.FramelessWindowHint)

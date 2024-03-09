@@ -57,7 +57,7 @@ class HomeWindow(QMainWindow):
 
         # Create a container widget to hold camera and button
         container_widget = QWidget(self)
-        container_layout = QHBoxLayout(container_widget)
+        container_layout = QVBoxLayout(container_widget)
         container_layout.setContentsMargins(0, 0, 0, 0)
         # Create a QLabel to display the camera feed
         self.camera_label = QLabel(self)
@@ -70,7 +70,7 @@ class HomeWindow(QMainWindow):
         self.enzin_label.setEnabled(False)
         button_layout.addWidget(self.enzin_label)
         
-        # button_layout.setContentsMargins(10, 14, 10, 14)
+        button_layout.setContentsMargins(0, 0, 0, 0)
 
         # Create the second additional button and set its properties
         self.simulate_btn = QPushButton("", self)
@@ -102,17 +102,21 @@ class HomeWindow(QMainWindow):
 
         center_left_layout = QVBoxLayout()
         center_left_layout.addWidget(self.info_btn)
-        center_left_layout.setContentsMargins(10, 770, 10, 10)
+        center_left_layout.setContentsMargins(0, 0, 0, 0)
 
-        center_right_layout = QVBoxLayout()
+
+        center_right_layout = QHBoxLayout()
+        center_right_layout.addWidget(self.info_btn)
+        center_right_layout.addSpacing(700)
         center_right_layout.addWidget(self.collect)
-        center_right_layout.setContentsMargins(10, 30, 10, 10)
+        center_right_layout.setContentsMargins(0, 0, 0, 0)
+
 
         # Set up the camera_label layout
         camera_layout = QVBoxLayout(self.camera_label)
         
         camera_layout.addLayout(center_right_layout) 
-        camera_layout.addLayout(center_left_layout) 
+        # camera_layout.addLayout(center_left_layout) 
 
         camera_layout.addStretch(1)  # Add stretch to push buttons to the top
 
@@ -121,10 +125,10 @@ class HomeWindow(QMainWindow):
         
         # Create a QLabel to serve as a container for the buttons
         self.button_b_container = QLabel(self)
-        self.button_b_container.setFixedWidth(300)  # Set an appropriate height
+        self.button_b_container.setFixedHeight(270)  # Set an appropriate height
         self.button_b_container.setStyleSheet(c.BUTTON_BG_PATH)  # Set the path to your image
         
-        button_b_layout = QVBoxLayout(self.button_b_container)
+        button_b_layout = QHBoxLayout(self.button_b_container)
         self.button_machine = QPushButton("", self)
         self.button_machine.setFixedHeight(150)
         self.button_machine.setFixedWidth(200)
@@ -135,7 +139,7 @@ class HomeWindow(QMainWindow):
         self.button_door.setFixedWidth(148)
         self.button_door.setEnabled(False)
         
-        # button_b_layout.setContentsMargins(14, 14, 14, 14)
+        button_b_layout.setContentsMargins(18, 0, 18, 0)
         button_b_layout.addSpacing(10)
         button_b_layout.addWidget(self.enzin_label, alignment=QtCore.Qt.AlignCenter)
         button_b_layout.addSpacing(20)
@@ -197,9 +201,9 @@ class HomeWindow(QMainWindow):
         self.info_window.showFullScreen()
         
     def init_main_window(self):
-        width = 1920
+        width = 1080
         aspect_ratio = 9 / 16  # 9:16
-        height = int(width * aspect_ratio)
+        height = int(width / aspect_ratio)
         self.setGeometry(0, 0, width, height)
         self.setStyleSheet(c.BACKGROUND_PATH)
         self.setWindowFlags(Qt.FramelessWindowHint)

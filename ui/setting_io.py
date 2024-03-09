@@ -36,11 +36,12 @@ class SettingWindow(QMainWindow):
 
         # Tạo hai side bar
         input_side = QWidget(self)
-        self.create_left_buttons(input_side)  # Thêm button vào bên trái
+
+        
 
         self.input_header = QLabel("INPUT", self)
         self.input_header.setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #2874A6, stop:1 #85C1E9); color: white; border: none")
-        self.input_header.setFixedWidth(1920/2)
+        self.input_header.setFixedWidth(1080)
         self.input_header.setAlignment(Qt.AlignCenter)
         
         font = self.input_header.font()
@@ -48,30 +49,32 @@ class SettingWindow(QMainWindow):
         self.input_header.setFont(font)
 
         output_side = QWidget(self)
-        self.create_right_buttons(output_side)  # Thêm button vào bên phải
 
         self.output_header = QLabel("OUTPUT", self)
         self.output_header.setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #17A589, stop:1 #A3E4D7); color: white; border: none")
-        self.output_header.setFixedWidth(1920/2)
+        self.output_header.setFixedWidth(1080)
         self.output_header.setAlignment(Qt.AlignCenter)
 
         font = self.output_header.font()
         font.setPointSize(60)  # You can change the size as needed
         self.output_header.setFont(font)
 
-        input_side.setFixedWidth(1920/2)
+        input_side.setFixedWidth(1080)
+        
+        self.create_left_buttons(input_side)  # Thêm button vào bên trái
+        self.create_right_buttons(output_side)  # Thêm button vào bên phải
 
         # Đặt các side bar và header vào layout ngang
-        side_bar_layout = QHBoxLayout()
+        side_bar_layout = QVBoxLayout()
         side_bar_layout.addWidget(input_side)
         side_bar_layout.addWidget(output_side)
 
         header_layout = QHBoxLayout()
         header_layout.addWidget(self.input_header, alignment=Qt.AlignCenter)
-        header_layout.addWidget(self.output_header, alignment=Qt.AlignCenter)
+        # header_layout.addWidget(self.output_header, alignment=Qt.AlignCenter)
 
         # Sử dụng QSplitter để chia đôi màn hình
-        splitter = QSplitter(Qt.Horizontal)
+        splitter = QSplitter(Qt.Vertical)
         splitter.addWidget(input_side)
         splitter.addWidget(output_side)
 
@@ -89,7 +92,7 @@ class SettingWindow(QMainWindow):
         bottom_layout = QHBoxLayout()
         bottom_layout.addStretch(1)  # Thêm một khoảng trống linh hoạt giữa nút close và nút quit
         bottom_layout.addWidget(self.quit_btn, alignment=Qt.AlignTop | Qt.AlignRight)
-        bottom_layout.setContentsMargins(0, 0, 25, 0)
+        bottom_layout.setContentsMargins(0, 0, 33, 0)
         # Thêm bottom_layout vào container_layout trước top_layout
         container_layout.addLayout(bottom_layout, 0)  # Đặt index là 0 để thêm vào đầu tiên
 
@@ -246,17 +249,18 @@ class SettingWindow(QMainWindow):
         self.buzer_btn.setFixedWidth(150)
 
         layout_button = QVBoxLayout(widget)
-
+        layout_button.addWidget(self.output_header, alignment=Qt.AlignCenter, stretch=1)
         layout_group_button_top = QHBoxLayout()
         layout_group_button_top.addWidget(self.interlock_btn)
         layout_group_button_top.addWidget(self.system_status_btn)
         layout_group_button_top.addWidget(self.buzer_btn)
-        layout_button.addLayout(layout_group_button_top)
+        layout_button.addLayout(layout_group_button_top, stretch=2)
 
         layout_group_button_bot = QHBoxLayout()
+        
         layout_group_button_bot.addWidget(self.spare_4_btn)
         layout_group_button_bot.addWidget(self.spare_5_btn)
-        layout_button.addLayout(layout_group_button_bot)
+        layout_button.addLayout(layout_group_button_bot, stretch=2)
 
 
     def update_button_by_enzim(self):

@@ -33,4 +33,4 @@ if __name__ == "__main__":
     main(args.mode)
 
     command = "sh ~/.xprofile"
-    # subprocess.run(command, shell=True)
+    subprocess.run(command, shell=True)
