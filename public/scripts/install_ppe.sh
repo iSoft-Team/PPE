@@ -108,7 +108,7 @@ cd ..
 pip install Jetson.GPIO
 sudo groupadd -f -r gpio
 sudo usermod -a -G gpio "$CURRENT_USER"
-sudo cp "/home/$CURRENT_USER/.virtualenvs/ppe/lib/python3/site-packages/Jetson/GPIO/99-gpio.rules" /etc/udev/rules.d/
+# sudo cp "/home/$CURRENT_USER/.virtualenvs/ppe/lib/python3/site-packages/Jetson/GPIO/99-gpio.rules" /etc/udev/rules.d/
 sudo udevadm control --reload-rules && sudo udevadm trigger
 
 # Install additional packages
