@@ -49,16 +49,16 @@ sudo apt-get install -y python3-pip
 sudo pip3 install -U pip testresources setuptools
 
 # Create virtual environment
-sudo pip install virtualenv virtualenvwrapper
-export WORKON_HOME="/home/$CURRENT_USER/.virtualenvs"
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-source /usr/local/bin/virtualenvwrapper.sh
+# sudo pip install virtualenv virtualenvwrapper
+# export WORKON_HOME="/home/$CURRENT_USER/.virtualenvs"
+# export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+# source /usr/local/bin/virtualenvwrapper.sh
 
-source ~/.bashrc
-mkvirtualenv ppe -p python3
-workon ppe
+# source ~/.bashrc
+# mkvirtualenv ppe -p python3
+# workon ppe
 
-sudo chown -R "$CURRENT_USER":"$CURRENT_USER" /home/"$CURRENT_USER"/.virtualenvs/ppe
+# sudo chown -R "$CURRENT_USER":"$CURRENT_USER" /home/"$CURRENT_USER"/.virtualenvs/ppe
 
 # Install jtop
 sudo apt-get install -y python3-pip
@@ -68,26 +68,27 @@ sudo -H pip install -U jetson-stats
 sudo apt-get update
 sudo apt-get install -y build-essential python3-dev python3-pip python3-pyqt5.qtsvg python3-pyqt5.qtwebkit
 sudo apt-get install -y qt5-default
+sudo apt-get install libpyside2-py3-5.14 python3-pyside2.qtcore python3-pyside2.qtuitools python3-pyside2.qtwidgets qt5-style-plugins qt5-gtk2-platformtheme
 
 # Install PyQt5
-wget https://files.pythonhosted.org/packages/8c/90/82c62bbbadcca98e8c6fa84f1a638de1ed1c89e85368241e9cc43fcbc320/PyQt5-5.15.0.tar.gz
+# wget https://files.pythonhosted.org/packages/8c/90/82c62bbbadcca98e8c6fa84f1a638de1ed1c89e85368241e9cc43fcbc320/PyQt5-5.15.0.tar.gz
 
-wget https://www.riverbankcomputing.com/static/Downloads/sip/4.19.25/sip-4.19.25.tar.gz
-tar -xvzf sip-4.19.25.tar.gz
-cd sip-4.19.25
-python3 configure.py
-make
-sudo make install
+# wget https://www.riverbankcomputing.com/static/Downloads/sip/4.19.25/sip-4.19.25.tar.gz
+# tar -xvzf sip-4.19.25.tar.gz
+# cd sip-4.19.25
+# python3 configure.py
+# make
+# sudo make install
 
-cd ..
-tar -xvzf PyQt5-5.15.0.tar.gz
-cd PyQt5-5.15.0
-python3 configure.py --qmake /usr/bin/qmake
-make
-sudo make install
-cd ..
+# cd ..
+# tar -xvzf PyQt5-5.15.0.tar.gz
+# cd PyQt5-5.15.0
+# python3 configure.py --qmake /usr/bin/qmake
+# make
+# sudo make install
+# cd ..
 
-pip install PyQt5-sip -U
+# pip install PyQt5-sip -U
 
 # Install PyTorch
 sudo apt-get -y update
@@ -111,7 +112,7 @@ sudo cp "/home/$CURRENT_USER/.virtualenvs/ppe/lib/python3/site-packages/Jetson/G
 sudo udevadm control --reload-rules && sudo udevadm trigger
 
 # Install additional packages
-pip install ultralytics opencv-python pydantic-1.8.2 python-dotenv terminaltables
+pip install ultralytics==8.0.220 opencv-python pydantic==1.8.2 python-dotenv terminaltables
 
 # Disable sleep
 sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
@@ -120,9 +121,9 @@ sudo apt purge xscreensaver
 
 # Clone PPE app repository at the end
 PPE_REPO_DIR="/home/$CURRENT_USER/Downloads/repos/ppe-app"
-clone_if_not_exists "$PPE_REPO_DIR" "git@github.com:ngocthien2306/ppe-app.git"
+clone_if_not_exists "$PPE_REPO_DIR" "git@github.com:ngocthien2306/ppe-app-clone.git"
 cd "$PPE_REPO_DIR"
-git checkout v0.3-auto-vertical
+git checkout v0.4-vertical
 
 # Run the PPE app
 python main.py
