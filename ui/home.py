@@ -253,7 +253,7 @@ class HomeWindow(QMainWindow):
             else:
                 self.simulate_yn = False
 
-            if self.curr_value_enzim != cf.STATE_ENZYME: #  and self.curr_status_machine != cf.STATE_MACHINE:
+            if self.curr_value_enzim != cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
                 self.gpio_handler.output_pass("ON")
             else:
                 self.gpio_handler.output_pass("OFF")
@@ -276,7 +276,7 @@ class HomeWindow(QMainWindow):
             if self.curr_status_machine == cf.STATE_MACHINE and self.curr_value_enzim == cf.STATE_ENZYME:
                 self.reset_ui_and_interlock()
 
-            if self.curr_value_enzim != cf.STATE_ENZYME: # and self.curr_status_machine != cf.STATE_MACHINE:
+            if self.curr_value_enzim != cf.STATE_ENZYME and self.curr_status_machine != cf.STATE_MACHINE:
                 self.gpio_handler.output_pass("ON")
             else:
                 self.gpio_handler.output_pass("OFF")
