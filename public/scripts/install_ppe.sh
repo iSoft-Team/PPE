@@ -22,9 +22,6 @@ clone_if_not_exists() {
   fi
 }
 
-# Generate SSH key
-ssh-keygen -t rsa -b 4096 -C "ngocthien.dev23@gmail.com"
-cat ~/.ssh/id_rsa.pub
 
 # Clone other repositories if needed
 clone_if_not_exists "/home/$CURRENT_USER/Downloads/repos/vision" "https://github.com/pytorch/vision.git"
